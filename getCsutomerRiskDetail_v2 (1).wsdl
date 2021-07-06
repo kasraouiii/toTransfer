@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:tns="http://com.socgen.ma/internal/service/local/CII_CustomerRiskDetails_Sync/v2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://com.socgen.ma/internal/schema/local/CII_CustomerRiskDetails_Sync/v2" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="Untitled" targetNamespace="http://com.socgen.ma/internal/service/local/CII_CustomerRiskDetails_Sync/v2">
+    <wsdl:types>
+        <xs:schema xmlns="http://com.socgen.ma/internal/schema/local/CII_CustomerRiskDetails_Sync/v2" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://com.socgen.ma/internal/schema/local/CII_CustomerRiskDetails_Sync/v2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:element name="Error">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="codeRetour" type="xs:string"/>
+                        <xs:element name="messageRetour" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Reply">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Status">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="status" type="xs:string"/>
+                                    <xs:element name="errorCode" type="xs:string"/>
+                                    <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="CustomerDetails" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="accountOpeningDate" type="xs:string"/>
+                                    <xs:element name="accountChapter" type="xs:string"/>
+                                    <xs:element name="convention" type="xs:string"/>
+                                    <xs:element name="countryOfResidence" type="xs:string"/>
+                                    <xs:element name="numberOfDaysDebtorOnNDaysMonth" type="xs:int"/>
+                                    <xs:element name="numberOfDaysMonthsWithoutPassingCredit" type="xs:int"/>
+                                    <xs:element name="averageNetBalanceOnNDaysMonths" type="xs:decimal"/>
+                                    <xs:element name="totalCustomerSavings" type="xs:decimal"/>
+                                    <xs:element name="amountOfAuthorizedOverdraft" type="xs:decimal"/>
+                                    <xs:element name="customerCode" type="xs:string"/>
+                                    <xs:element name="rib" type="xs:string"/>
+                                    <xs:element name="nationalIdentityCard" type="xs:string"/>
+                                    <xs:element name="customerType" type="xs:string"/>
+                                    <xs:element name="customerMarketCode" type="xs:string"/>
+                                    <xs:element name="entitled" type="xs:string"/>
+                                    <xs:element name="name" type="xs:string"/>
+                                    <xs:element name="firstName" type="xs:string"/>
+                                    <xs:element name="foreignCustomer" type="xs:string"/>
+                                    <xs:element name="passeportNumber" type="xs:string"/>
+                                    <xs:element name="validityEndDateOfNIC" type="xs:string"/>
+                                    <xs:element name="conventionCode" type="xs:string"/>
+                                    <xs:element name="tel1" type="xs:string"/>
+                                    <xs:element name="tel2" type="xs:string"/>
+                                    <xs:element name="tel3" type="xs:string"/>
+                                    <xs:element name="address" type="xs:string"/>
+                                    <xs:element name="postalCode" type="xs:string"/>
+                                    <xs:element name="city" type="xs:string"/>
+                                    <xs:element name="activeAccount" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="CustomerRisk" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="internalLoans" type="xs:decimal"/>
+                                    <xs:element name="paymentInProgressCheckRejected" type="xs:int"/>
+                                    <xs:element name="existenceOfUnpaidCreditsSGMA" type="xs:int"/>
+                                    <xs:element name="havingBenefitedRestructuringDepthNMonths" type="xs:int"/>
+                                    <xs:element name="litigationSettledInTheLastNYears" type="xs:int"/>
+                                    <xs:element name="accountFreezeInformation" type="xs:int"/>
+                                    <xs:element name="averageBalanceCredit" type="xs:decimal"/>
+                                    <xs:element name="amountOfCashFlowLessThanNMonths" type="xs:decimal"/>
+                                    <xs:element name="numberOfDaysExceedingAuthorization" type="xs:int"/>
+                                    <xs:element name="countryOfResidence" type="xs:string"/>
+                                    <xs:element name="numberOfDaysDebtorOverNMonths" type="xs:int"/>
+                                    <xs:element name="loanPPOMonthly" type="xs:decimal"/>
+                                    <xs:element name="loanPPOInProgress" type="xs:decimal"/>
+                                    <xs:element name="loanPPIMonthly" type="xs:decimal"/>
+                                    <xs:element name="loanPPIInProgress" type="xs:decimal"/>
+                                    <xs:element name="otherLoanMonthly" type="xs:decimal"/>
+                                    <xs:element name="otherLoanInProgress" type="xs:decimal"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Request">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="appSource" type="xs:string"/>
+                        <xs:element name="branch" type="xs:string"/>
+                        <xs:element name="currencyCode" type="xs:string"/>
+                        <xs:element name="accountNumber" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="HTTP_Service_v2">
+        <wsdl:port name="DataPortEndpoint_v2" binding="tns:DataPortEndpoint_v2Binding">
+            <soap:address location="https://localhost:9996/getCustomerRiskDetails/v2"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="DataPort">
+        <wsdl:operation name="GetCustomerRiskDetails">
+            <wsdl:input message="tns:InputMessage"/>
+            <wsdl:output message="tns:OutputMessage"/>
+            <wsdl:fault name="ESBError" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="DataPortEndpoint_v2Binding" type="tns:DataPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetCustomerRiskDetails">
+            <soap:operation style="document" soapAction="GetCustomerRiskDetails"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:output>
+            <wsdl:fault name="ESBError">
+                <soap:fault use="literal" name="ESBError"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="InputMessage">
+        <wsdl:part name="parameters" element="ns0:Request"/>
+    </wsdl:message>
+    <wsdl:message name="OutputMessage">
+        <wsdl:part name="parameters" element="ns0:Reply"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="parameters" element="ns0:Error"/>
+    </wsdl:message>
+</wsdl:definitions>
