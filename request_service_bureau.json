@@ -1,0 +1,30 @@
+{
+    "entete": {
+        "beEnqTyp": "01",
+        "beRespTyp": "1"
+    },
+    "credit": {
+        "beAppref": "0",
+        "beAppDt": "20180224",
+        "beAcTyp": "0",
+        "beCredTyp": "0001",
+        "beCredPurp": "99",
+        "beIDCur": "MAD",
+        "beCredAmnt": "0"
+    },
+    "demandeur": {
+        "adresse": [
+            {
+                "adIDCi": "270"
+            }
+        ],
+        "persp": {
+            "coIDTyp": "I",
+            "coID": "XX123456",
+            "coNm": "HAMZA",
+            "coFnm": "AIT B.MOHAMMED",
+            "coSex": "F", 
+            "coBirthDT": "19720517"
+        }
+    }
+}
