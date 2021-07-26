@@ -1,0 +1,3275 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MS Loan",
+    "description": "APIs of Loan microservice offers the resources to calculate the mensualite and get credit informations of a customer :<br /><br />1. Calculate the mensualite  with the offered capital and loan duration <br /><br />2. Get simulation by id <br /><br />3. Calculate the maximum amount of a credit simulation <br /><br />4. Check debt capacity of a client <br /><br />5. Reterive the list of all loan with types PPI/PPO of a certain customer <br /><br />6. Get the details of specific loan <br /><br />7. Initiate a credit request for a simulation <br /><br />8. Update demande status by simulation id and status <br /><br />9. Get pages of saved demandes in database, criteria and page infos are requested as request parameters <br /><br />The API uses conventional HTTP response codes to indicate the success or failure of an API request : <br /><ul>   <li>Codes in the 2xx range indicate success operations.       <ul>           <li>201 indicates that a POST request is done successfully.</li>           <li>200 indicates that all requests except POST are done successfully.</li>       </ul>   </li> \t<li>Codes in the 4xx range indicate errors in the provided informations.       <ul> \t        <li>401 indicates that the request is unauthorized.</li> \t        <li>403 indicates that the request is not permitted.</li>       </ul>   </li> \t<li>Codes in the 5xx range indicate errors during server process.</li></ul>The authentication is based on oauth2 protocol with openid connect identity layer, upon passing authorization request with jwt token encoded in bearer header we could access the rest api :<br /><ul>   <li>authorize button is used to open a popup with client credentials inputs to request for an authorization jwt token, the token will be used automatically within each request.</li></ul><strong>P.S : For more informations about APIs please check every operation's details separately on open-api documentation</strong><br /><br /></p>",
+    "version": "0.10.0-SNAPSHOT"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8085",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "spring_oauth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Loan",
+      "description": "Loan API"
+    }
+  ],
+  "paths": {
+    "/credit-info/report": {
+      "post": {
+        "description": "resource is used to send information about the credit request to the Central Risk Office and to define the type of response desired",
+        "operationId": "getReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequeteDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation, return ReponseDTO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VndError"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Requested resource not found, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-info/reportplus": {
+      "post": {
+        "description": "resource is used to send information about the credit request to the Central Risk Office and to define the type of response desired",
+        "operationId": "getReportPlus",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/RequeteDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation, return ReponseDTO",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VndError"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Requested resource not found, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error, payload contains json of response error (array of VndError referenced in Schemas)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityModelReponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+  },
+
+  "components": {
+    "schemas": {
+      "Link": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "hreflang": {
+            "type": "string"
+          },
+          "media": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "deprecation": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "VndError": {
+        "type": "object",
+        "properties": {
+          "logref": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "ActionMDTO": {
+        "type": "object",
+        "properties": {
+          "shTyp": {
+            "type": "string",
+            "description": "Nature of the shareholder : 1 : PP or 2 : PM",
+            "example": "PP",
+            "enum": [
+              "PP",
+              "PM"
+            ]
+          },
+          "shIDTyp": {
+            "type": "string",
+            "description": "Primary identifier type : Must contain :\nI: CIN if PP\nP: passport if PP\nC: residence permit if PP\nD: Diplomatic if PP\nR: Commercial register if PM",
+            "example": "PP",
+            "enum": [
+              "I",
+              "P",
+              "C",
+              "D",
+              "R"
+            ]
+          },
+          "shID": {
+            "type": "string",
+            "description": "The ID number of the natural person. Populated according to the value of the main identifier type : Mandatory if 'Main identifier type' = I, P, C or D.",
+            "example": "AB12548"
+          },
+          "shIDTrib": {
+            "type": "string",
+            "description": "Court code of the commercial register : Mandatory if 'Main identifier type' = R.",
+            "example": "5487547"
+          },
+          "shIDTraReg": {
+            "type": "integer",
+            "description": "the commercial register : Mandatory if 'Main identifier type' = R.",
+            "example": 587445587
+          },
+          "shNm": {
+            "type": "string",
+            "description": "Name and first name of the natural person Or Company name of the legal person.",
+            "example": "company"
+          },
+          "shCapQta": {
+            "type": "integer",
+            "description": "Percentage in share capital : Must be greater than 10%.",
+            "format": "int32",
+            "example": 25
+          }
+        },
+        "description": "List of all possible types of personal or corporation actions"
+      },
+      "AdresseDTO": {
+        "type": "object",
+        "properties": {
+          "adUnFmAdr1": {
+            "type": "string",
+            "description": "Address field1 : 1st part of the Address: point of delivery (Apt or Letterbox number).",
+            "example": "appart 1"
+          },
+          "adUnFmAdr2": {
+            "type": "string",
+            "description": "Address field2 : 2nd part of the Address: Geographical point (Imm, Residence).",
+            "example": "imm 23"
+          },
+          "adUnFmAdr3": {
+            "type": "string",
+            "description": "Address field3 : 3rd part of the Address: number, type and description of the route.",
+            "example": "route azemour"
+          },
+          "adUnFmAdr4": {
+            "type": "string",
+            "description": "Address field4 : 4th part of the address: locality (BP, District, ..).",
+            "example": "Les hôpitaux"
+          },
+          "adCi": {
+            "type": "string",
+            "description": "Name of the city.",
+            "example": "Casablanca"
+          },
+          "adPoCd": {
+            "type": "string",
+            "description": "Postal code.",
+            "example": "22500"
+          },
+          "adCntry": {
+            "type": "string",
+            "description": "Country code address.",
+            "example": "21"
+          },
+          "adDtAt": {
+            "type": "string",
+            "description": "Date of entry at the address mentioned.",
+            "example": "21"
+          },
+          "adTyp": {
+            "type": "string",
+            "description": "Type of address : Must contain :\nC: Current.\nP: Previous..",
+            "example": "C",
+            "enum": [
+              "C",
+              "P"
+            ]
+          },
+          "adIDCi": {
+            "type": "string",
+            "description": "City Code.",
+            "example": "1"
+          }
+        },
+        "description": "List of all possible types of personal or corporation address"
+      },
+      "ContactMDTO": {
+        "type": "object",
+        "properties": {
+          "bcNm": {
+            "type": "string",
+            "description": "Contact last name.",
+            "example": "mrini"
+          },
+          "bcFnm": {
+            "type": "string",
+            "description": "Contact first name.",
+            "example": "said"
+          },
+          "bcSex": {
+            "type": "string",
+            "description": "Contact gender : \nMust contain :\nM: Male\nF: Female.",
+            "example": "M",
+            "enum": [
+              "M",
+              "F"
+            ]
+          },
+          "bcPhNo": {
+            "type": "integer",
+            "description": "Contact's business phone number.",
+            "example": 761001010
+          }
+        },
+        "description": "List of all possible types of personal or corporation contacts"
+      },
+      "CreditDTO": {
+        "required": [
+          "beAcTyp",
+          "beAppDt",
+          "beCredAmnt",
+          "beCredPurp",
+          "beCredTrmTyp",
+          "beCredTyp",
+          "beIDCur"
+        ],
+        "type": "object",
+        "properties": {
+          "beIDCi": {
+            "type": "string",
+            "description": "Code of the locality of the agency that manages the loan request.",
+            "example": "22"
+          },
+          "beIDAgen": {
+            "type": "integer",
+            "description": "The branch code of the agency handling the loan request.",
+            "format": "int32",
+            "example": 31
+          },
+          "beAppref": {
+            "type": "string",
+            "description": "Credit proposal reference.",
+            "example": "cr54754"
+          },
+          "beAppDt": {
+            "type": "string",
+            "description": "Effective date of the credit. format YYYYMMDD\n Must be a valid date.\n Must be less than or equal to the date of the request",
+            "example": "19990122"
+          },
+          "beAcTyp": {
+            "type": "string",
+            "description": "Type of contract. Must contain :\nINDIVIDUAL : 0\nJOINT_ACCOUNT_HOLDER : 1\nBUSINESS_CONSORTIUM : 2\nINDIVIDUAL_WITH_BANK_CONSORTIUM : 3\nJOINT_ACCOUNT_HOLDER_WITH_BANK_CONSORTIUM : 4\nBUSINESS_CONSORTIUM_WITH_BANK_CONSORTIUM : 5",
+            "example": "INDIVIDUAL",
+            "enum": [
+              "INDIVIDUAL",
+              "JOINT_ACCOUNT_HOLDER",
+              "BUSINESS_CONSORTIUM",
+              "INDIVIDUAL_WITH_BANK_CONSORTIUM",
+              "JOINT_ACCOUNT_HOLDER_WITH_BANK_CONSORTIUM",
+              "BUSINESS_CONSORTIUM_WITH_BANK_CONSORTIUM"
+            ]
+          },
+          "beCredTyp": {
+            "type": "string",
+            "description": "Type of credit.",
+            "example": "0001"
+          },
+          "beCredPurp": {
+            "type": "string",
+            "description": "Purpose of the loan.",
+            "example": "01"
+          },
+          "beCredTrmTyp": {
+            "type": "integer",
+            "description": "Credit maturity : Must contain:\n0: credit without maturity.\n1: credit with maturity.\n2: indefinite term (credit card). ",
+            "format": "int32",
+            "example": 1
+          },
+          "beIDCur": {
+            "type": "string",
+            "description": "Credit currency code.",
+            "example": "MAD"
+          },
+          "beCredAmnt": {
+            "type": "integer",
+            "description": "Amount requested.",
+            "format": "int64",
+            "example": 30000
+          },
+          "beInstTrmTyp": {
+            "type": "integer",
+            "description": "Flag Credit maturity type : Must contain :\n0: fixed.\n1: Variable.",
+            "format": "int32",
+            "example": 0
+          },
+          "beInstTotNum": {
+            "type": "integer",
+            "description": "Total number of loan maturities : May be informed if \"Maturity type\" = 1.",
+            "format": "int32",
+            "example": 0
+          },
+          "beInstDur": {
+            "type": "integer",
+            "description": "Periodicity of loan maturities : May be informed if \"Maturity type\" = 1.",
+            "format": "int32",
+            "example": 0
+          },
+          "beInstAmnt": {
+            "type": "integer",
+            "description": "Amount of installments : May be informed if \"Maturity type\" = 1.",
+            "format": "int64",
+            "example": 0
+          },
+          "bePayMthd": {
+            "type": "integer",
+            "description": "Credit payment method",
+            "format": "int32",
+            "example": 3
+          },
+          "beInstFstDt": {
+            "type": "string",
+            "description": "Date of the 1st maturity of the loan : May be informed if \"Maturity type\" = 1,  format YYYYMMDD\n Must be a valid date.\n Must be greater than the credit release date.",
+            "example": "20200122"
+          },
+          "beInstFstAmnt": {
+            "type": "integer",
+            "description": "Amount of the 1st maturity of the loan : May be informed if \"Maturity type\" = 1.",
+            "format": "int64",
+            "example": 6000
+          },
+          "beFinDt": {
+            "type": "string",
+            "description": "Credit release date, May be Informed if \"Maturity Type\" = 1 or 2.\nYYYYMMDD.\nMust be a valid date.\nMust be less than the 1st Due Date",
+            "example": "20190122"
+          },
+          "beGuarTyp": {
+            "type": "string",
+            "description": "Type of guarantee provided for the requested loan : Must contain :\n0: without guarantee.\n1: Real.\n2: Personal.\n3: Both.",
+            "example": "1"
+          },
+          "beSecPersAmnt": {
+            "type": "integer",
+            "description": "Total amount of personal guarantees provided, Can be informed if 'Type of guarantee' = 2 or 3.\nMust be less than or equal to 'Authorized capital of the loan' / 'Amount of the loan'",
+            "format": "int64",
+            "example": 2000
+          },
+          "beSecRealAmnt": {
+            "type": "integer",
+            "description": "Overall amount of actual guarantees expected, Can be informed if 'Type of guarantee' = 1 or 3.\nMust be less than or equal to 'Authorized capital of the loan'. / 'Amount of the loan' ",
+            "format": "int64",
+            "example": 60000
+          }
+        },
+        "description": "Detailed credit segment."
+      },
+      "DemandeurDTO": {
+        "type": "object",
+        "properties": {
+          "persp": {
+            "$ref": "#/components/schemas/PersPDTO"
+          },
+          "persm": {
+            "$ref": "#/components/schemas/PersMDTO"
+          },
+          "donneep": {
+            "$ref": "#/components/schemas/DonneePDTO"
+          },
+          "adresse": {
+            "type": "array",
+            "description": "List of all possible types of personal or corporation address",
+            "items": {
+              "$ref": "#/components/schemas/AdresseDTO"
+            }
+          },
+          "emplp": {
+            "type": "array",
+            "description": "List of employer information segment of a natural person",
+            "items": {
+              "$ref": "#/components/schemas/EmplPDTO"
+            }
+          },
+          "contactm": {
+            "type": "array",
+            "description": "List of all possible types of personal or corporation contacts",
+            "items": {
+              "$ref": "#/components/schemas/ContactMDTO"
+            }
+          },
+          "actionm": {
+            "type": "array",
+            "description": "List of all possible types of personal or corporation actions",
+            "items": {
+              "$ref": "#/components/schemas/ActionMDTO"
+            }
+          },
+          "finanm": {
+            "$ref": "#/components/schemas/FinanMDTO"
+          }
+        },
+        "description": "segment corresponding to the requested credit information"
+      },
+      "DonneePDTO": {
+        "type": "object",
+        "properties": {
+          "coChildNb": {
+            "type": "integer",
+            "description": "Number of children and dependents.",
+            "example": 2
+          },
+          "coAnnRev": {
+            "type": "integer",
+            "description": "Annual income.",
+            "format": "int64",
+            "example": 200000
+          },
+          "coAnnRevTyp": {
+            "type": "string",
+            "description": "Net / gross income indicator.",
+            "example": "20000"
+          },
+          "coFamAnnRev": {
+            "type": "integer",
+            "description": "Total annual family income.",
+            "format": "int64",
+            "example": 300000
+          },
+          "coFamAnnRevTyp": {
+            "type": "string",
+            "description": "Net / gross family income indicator. May be Informed if \"annual income\" entered\nMust contain :\nB: Gross\nN: Net",
+            "example": "B",
+            "enum": [
+              "N",
+              "B"
+            ]
+          },
+          "coRevCur": {
+            "type": "string",
+            "description": "Currency code of the annual income of the applicant and the family. Must be referenced in the table 'Currency codes'",
+            "example": "MAD"
+          },
+          "coResCode": {
+            "type": "string",
+            "description": "Residential conditions. Must be referenced in the table 'Residential Conditions'.",
+            "example": "01"
+          },
+          "coEmail": {
+            "type": "string",
+            "description": "E-mail adress.",
+            "example": "test@mail.com"
+          },
+          "coDtAtBank": {
+            "type": "string",
+            "description": "Bank seniority date. YYYYMMDD",
+            "example": "19001212"
+          },
+          "coEmpStat": {
+            "type": "integer",
+            "description": "Type of job held (full-time employee, part-time employee, unemployed, etc). Must be referenced in the 'Types of employment' table.",
+            "example": 2
+          },
+          "coCcNb": {
+            "type": "integer",
+            "description": "Number of credit cards held",
+            "example": 1
+          }
+        },
+        "description": "Personal data segment of a natural person"
+      },
+      "EmplPDTO": {
+        "type": "object",
+        "properties": {
+          "empStDt": {
+            "type": "string",
+            "description": "Date of start of activity with the employer YYYYMMDD. Must be less than the Date of the request loan",
+            "example": "20181210"
+          },
+          "empEndDt": {
+            "type": "string",
+            "description": "Date of end of activity with the employer YYYYMMDD. Must be greater than the Activity Start Date",
+            "example": "20191210"
+          },
+          "empAct": {
+            "type": "string",
+            "description": "Activity sector, Must be referenced in the 'Activity index' table",
+            "example": "00013"
+          },
+          "empNm": {
+            "type": "string",
+            "description": "Company name or name of employer",
+            "example": "SG"
+          },
+          "empUnFmAdr1": {
+            "type": "string",
+            "description": "Address field1 : 1st part of the Address: point of delivery (Apt or Letterbox number).",
+            "example": "appart 1"
+          },
+          "empUnFmAdr2": {
+            "type": "string",
+            "description": "Address field2 : 2nd part of the Address: Geographical point (Imm, Residence).",
+            "example": "imm 23"
+          },
+          "empUnFmAdr3": {
+            "type": "string",
+            "description": "Address field3 : 3rd part of the Address: number, type and description of the route.",
+            "example": "route azemour"
+          },
+          "empUnFmAdr4": {
+            "type": "string",
+            "description": "Address field4 : 4th part of the address: locality (BP, District, ..).",
+            "example": "Les hôpitaux"
+          },
+          "empCi": {
+            "type": "string",
+            "description": "Name of the city.",
+            "example": "Casablanca"
+          },
+          "empPoCd": {
+            "type": "string",
+            "description": "Postal code.",
+            "example": "22500"
+          },
+          "empCntry": {
+            "type": "string",
+            "description": "Country code address.",
+            "example": "21"
+          },
+          "empPhNo": {
+            "type": "integer",
+            "description": "Employer phone number",
+            "example": 561121212
+          }
+        },
+        "description": "Employer information segment of a natural person"
+      },
+      "EnteteDTO": {
+        "required": [
+          "beEnqTyp",
+          "beRespTyp",
+          "idUser",
+          "userPwd"
+        ],
+        "type": "object",
+        "properties": {
+          "idUser": {
+            "type": "string",
+            "description": "login to the requested credit information",
+            "example": "user_name"
+          },
+          "userPwd": {
+            "type": "string",
+            "description": "password the requested credit information",
+            "example": "user_password"
+          },
+          "beEnqTyp": {
+            "type": "string",
+            "description": "Interrogation reason  of the requested credit information",
+            "example": "01"
+          },
+          "beRespTyp": {
+            "type": "string",
+            "description": "Responce type of  the requested credit information",
+            "example": "1"
+          }
+        },
+        "description": "segment corresponding to the requested credit information"
+      },
+      "FinanMDTO": {
+        "type": "object",
+        "properties": {
+          "finBegDt": {
+            "type": "string",
+            "description": "Start date of exercise. YYYYMMDD\nMust be a valid date.\nMust be greater than or equal to the creation date.\nMust be less than the Date of the request.",
+            "example": "20101212"
+          },
+          "finDur": {
+            "type": "integer",
+            "description": "Number of months in the financial year.\nMust be greater than 0 and less than or equal to 12.",
+            "format": "int32",
+            "example": 10
+          },
+          "finAutCap": {
+            "type": "integer",
+            "description": "Share capital",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finNetWrt": {
+            "type": "integer",
+            "description": "Equity",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finPerAss": {
+            "type": "integer",
+            "description": "Fixed assets",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finWrkCap": {
+            "type": "integer",
+            "description": "Working capital",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finCurLb": {
+            "type": "integer",
+            "description": "Short-term debt",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finTotBalSht": {
+            "type": "integer",
+            "description": "Balance sheet total",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finTurnov": {
+            "type": "integer",
+            "description": "Turnover",
+            "format": "int64",
+            "example": 1000000
+          },
+          "finEbtTyp": {
+            "type": "string",
+            "description": "Result type Must contain :\n+: profit\n-: loss",
+            "example": "+"
+          },
+          "finEbt": {
+            "type": "integer",
+            "description": "Amount of the result",
+            "format": "int64",
+            "example": 1000000
+          }
+        },
+        "description": "Financial information segment of a legal entity"
+      },
+      "PersMDTO": {
+        "type": "object",
+        "properties": {
+          "buIDNo": {
+            "type": "string",
+            "description": "Code of the moral client",
+            "example": "RCP"
+          },
+          "applicantType": {
+            "type": "integer",
+            "description": "Type of credit holder or applicant (principal, Shareholder, etc.), Must be referenced in the 'Holder Types' table.",
+            "format": "int32",
+            "example": 1
+          },
+          "buIDTrib": {
+            "type": "string",
+            "description": "Court code of the commercial register. Mandatory if 'Trade register' filled in.\n Must be referenced in the table of 'court codes'",
+            "example": "01"
+          },
+          "buIDTraReg": {
+            "type": "integer",
+            "description": "Commercial register, Mandatory if 'buIDAsso' is not completed",
+            "example": 56487214
+          },
+          "buIDFis": {
+            "type": "integer",
+            "description": "Tax ID number, Mandatory if ID of the table 'Legal forms' corresponding to the legal form entered = 21 or 22 or 24 or 25 or 26 or 27 or 30 or 40",
+            "example": 11
+          },
+          "buIDPat": {
+            "type": "integer",
+            "description": "Patent number",
+            "example": 54321447
+          },
+          "buIDAsso": {
+            "type": "string",
+            "description": "Identification of associations, Mandatory if 'buIDTraReg' is not entered",
+            "example": "RCP"
+          },
+          "buIDOther": {
+            "type": "string",
+            "description": "Identifier for other legal persons",
+            "example": "45878787"
+          },
+          "buNm": {
+            "type": "string",
+            "description": "company name",
+            "example": "RCP"
+          },
+          "buCrDt": {
+            "type": "string",
+            "description": "Creation date, YYYMMDD.\nMust be a valid date.\nMust be less than or equal to the date of the request",
+            "example": "20180101"
+          },
+          "buLegFo": {
+            "type": "string",
+            "description": "Legal form, must be referenced in the table of 'legal forms'",
+            "example": "11"
+          },
+          "buSize": {
+            "type": "string",
+            "description": "Size of the company, Must be referenced in the 'Company size' table",
+            "example": "PE"
+          },
+          "buAcro": {
+            "type": "string",
+            "description": "Acronym",
+            "example": "RCP"
+          },
+          "buIDPriAct": {
+            "type": "string",
+            "description": "Main activity code, Must be referenced at branch level in the 'Activity index' table",
+            "example": "0001"
+          },
+          "buIDSecAct": {
+            "type": "string",
+            "description": "Secondary activity code, Must be referenced at branch level in the 'Activity index' table",
+            "example": "0002"
+          },
+          "buIDEcon": {
+            "type": "string",
+            "description": "Economic agent code, Must be referenced in the 'Economical codes' table",
+            "example": "011"
+          },
+          "buIDGroup": {
+            "type": "string",
+            "description": "Membership group",
+            "example": "124578"
+          },
+          "phNoB1": {
+            "type": "integer",
+            "description": "Office phone 1",
+            "example": 566457858
+          },
+          "phNoB2": {
+            "type": "integer",
+            "description": "Office phone 2",
+            "example": 566457858
+          },
+          "phNoB3": {
+            "type": "integer",
+            "description": "Office phone 3",
+            "example": 566457858
+          },
+          "phNoF": {
+            "type": "integer",
+            "description": "Fax",
+            "example": 522123456
+          },
+          "buBrFlag": {
+            "type": "integer",
+            "description": "flag branch, Must contain :\n0: No, if “Company name of the head office” not specified.\n1: Yes, if \"Company name of the head office\" entered.",
+            "example": 1
+          },
+          "buHoNm": {
+            "type": "string",
+            "description": "Company name of the head office",
+            "example": "RCP"
+          },
+          "buHoIDTyp": {
+            "type": "string",
+            "description": "Seat identification type, Mandatory if \"buBrFlag\" = 1.\nCan contain :\nR: Court code + RC.\nI: Tax identifier.",
+            "example": "R"
+          },
+          "buIDHo": {
+            "type": "string",
+            "description": "Main head office identifier, Mandatory if 'buBrFlag' = 1.\nMandatory if 'Headquarters identification type' entered.\nIf 'buHoIDTyp' = R:\nThe court code must be referenced in the table of 'court codes'.",
+            "example": "RCP"
+          }
+        },
+        "description": "Financial information segment of a legal entity"
+      },
+      "PersPDTO": {
+        "type": "object",
+        "properties": {
+          "coIDNo": {
+            "type": "string",
+            "description": "Customer code",
+            "example": "123456"
+          },
+          "applicantType": {
+            "type": "integer",
+            "description": "Type of credit holder or applicant (principal, Shareholder, etc.), Must be referenced in the 'Holder Types' table.",
+            "format": "int32",
+            "example": 1
+          },
+          "coProfAct": {
+            "type": "integer",
+            "description": "Professional activity, Must contain :\n1: PP without professional activity.\n2: PP having a professional activity",
+            "format": "int32",
+            "example": 1
+          },
+          "coCateg": {
+            "type": "string",
+            "description": "Client Category, Must contain :\n1: Moroccan.\n2: Resident foreigner.\n4: Non-resident foreigner",
+            "example": "1"
+          },
+          "coIDTyp": {
+            "type": "string",
+            "description": "Primary identifier type, Must contain :\nif 'Customer category' = 1:\nI (CIN).\nIf 'Customer category' = 2:\nC (residence permit).\nIf 'Customer category' = 4:\nP (passport).\nD (Diplomatic)",
+            "example": "I"
+          },
+          "coID": {
+            "type": "string",
+            "description": "Primary Identifier",
+            "example": "XX123456"
+          },
+          "coDelDt": {
+            "type": "string",
+            "description": "Deliverance Date, YYYYMMDD.\nMust be a valid date.\nMust be less than or equal to the date of the request",
+            "example": "20201212"
+          },
+          "coExpDt": {
+            "type": "string",
+            "description": "Expiration date, YYYYMMDD.\nMust be a valid date.\nMust be greater than the deliverance date",
+            "example": "20201212"
+          },
+          "coDelCntry": {
+            "type": "string",
+            "description": "Deliverance country",
+            "example": "MA"
+          },
+          "coIDStEmp": {
+            "type": "string",
+            "description": "Official ID",
+            "example": "xxx123456"
+          },
+          "coNm": {
+            "type": "string",
+            "description": "Last name",
+            "example": "last name"
+          },
+          "coFnm": {
+            "type": "string",
+            "description": "Fisrt name",
+            "example": "fisrt name"
+          },
+          "coSex": {
+            "type": "string",
+            "description": "Gender, Must contain:\nM: Male.\nF: Female",
+            "example": "M",
+            "enum": [
+              "M",
+              "F"
+            ]
+          },
+          "coBirthDT": {
+            "type": "string",
+            "description": "Date of Birth, YYYYMMDD.\nMust be a valid date.\nAge must be between 16 and 80 years old",
+            "example": "19900203"
+          },
+          "coBirthPl": {
+            "type": "string",
+            "description": "Place of birth, Must be referenced in the 'Localities codes' table",
+            "example": "022"
+          },
+          "coNat": {
+            "type": "string",
+            "description": "Nationality, Must be referenced in the 'List of country codes' table",
+            "example": "MA"
+          },
+          "coMarSt": {
+            "type": "string",
+            "description": "Family status, Must contain :\nC: Single.\nM: Married.\nD: Divorced.\nV: Widower.",
+            "example": "C",
+            "enum": [
+              "C",
+              "M",
+              "D",
+              "V"
+            ]
+          },
+          "coEmpCat": {
+            "type": "string",
+            "description": "Professional category code, Must be referenced in the 'List of socio-professional categories' table",
+            "example": "03"
+          },
+          "buIDTrib": {
+            "type": "string",
+            "description": "Court code of the commercial register. Mandatory if 'Trade register' filled in.\n Authorized if 'Nature of client / Professional activity / field coProfAct' = 2.\n If \"Type of customer\" = 2:\n Mandatory if 'buIDTraReg' is informed Must be referenced in the table of 'court codes'",
+            "example": "01"
+          },
+          "buIDTraReg": {
+            "type": "integer",
+            "description": "Commercial register, Authorized if 'Nature of customer' = 2.\nIf 'Type of customer' = 2:\nMandatory if 'buIDTrib' entered.\nMandatory if 'buIDFis' and 'buIDPat' not specified",
+            "format": "int32",
+            "example": 56487214
+          },
+          "buIDFis": {
+            "type": "integer",
+            "description": "Tax ID number, Authorized if “Nature of customer” = 2.\nIf 'Type of customer' = 2:\nMandatory if 'buIDTraReg' and 'buIDPat' not specified.",
+            "format": "int32",
+            "example": 1458752
+          },
+          "buIDPat": {
+            "type": "integer",
+            "description": "Patent number, Authorized if 'Nature of customer' = 2.\nIf 'Type of customer' = 2:\nMandatory if 'buIDTraReg' and 'buIDFis' not specified.",
+            "format": "int32",
+            "example": 54321447
+          },
+          "buNm": {
+            "type": "string",
+            "description": "company name, Authorized if 'Type of customer' = 2.\nMandatory if 'Nature of customer' = 2.",
+            "example": "RCP"
+          },
+          "buCrDt": {
+            "type": "string",
+            "description": "The creation date, YYYYMMDD.\nAuthorized if 'Type of customer' = 2.\nMandatory if 'Nature of customer' = 2.\nMust be a valid date.\nMust be less than or equal to the date of the request",
+            "example": "20201010"
+          },
+          "buAcro": {
+            "type": "string",
+            "description": "Acronym, Authorized if 'Type of customer' = 2",
+            "example": "acronym"
+          },
+          "buIDPriAct": {
+            "type": "string",
+            "description": "Main activity code, Authorized if 'Nature of customer' = 2.\nIf entered, then: Must be referenced in the 'Activity index' table",
+            "example": "123456"
+          },
+          "buIDEcon": {
+            "type": "string",
+            "description": "Economic agent code, Authorized if 'Nature of customer' = 2.\nif informed:\nMust be referenced in the 'Economical codes' table",
+            "example": "020"
+          },
+          "phNoP": {
+            "type": "integer",
+            "description": "Personal phone number",
+            "example": 561021455
+          },
+          "phNoM": {
+            "type": "integer",
+            "description": "phone number",
+            "example": 561021455
+          },
+          "phNoT": {
+            "type": "integer",
+            "description": "business phone number",
+            "example": 561021455
+          }
+        },
+        "description": "Individual and sole proprietorship information segment"
+      },
+      "RequeteDTO": {
+        "type": "object",
+        "properties": {
+          "entete": {
+            "$ref": "#/components/schemas/EnteteDTO"
+          },
+          "credit": {
+            "$ref": "#/components/schemas/CreditDTO"
+          },
+          "demandeur": {
+            "$ref": "#/components/schemas/DemandeurDTO"
+          }
+        }
+      },
+      "BouncedChequesDTO": {
+        "type": "object",
+        "properties": {
+          "numberOfCheques": {
+            "type": "integer",
+            "description": "Number of unpaid checks for the subject.",
+            "format": "int32"
+          },
+          "totalValue": {
+            "type": "string",
+            "description": "Total amount of unpaid checks"
+          },
+          "weekSinceLastCheque": {
+            "type": "integer",
+            "description": "Weeks since the last unpaid check",
+            "format": "int32"
+          }
+        },
+        "description": "bounced Checks"
+      },
+      "DetailCreditDTO": {
+        "type": "object",
+        "properties": {
+          "acNum": {
+            "type": "string",
+            "description": "The credit references :  if it's not null that's means the requested loan is the same as the declared one",
+            "example": "ref5445"
+          },
+          "acIDSub": {
+            "type": "string",
+            "description": "The codes of credit institutions, that you can find in the \"Codes établissements de crédit\". ",
+            "example": "022"
+          },
+          "acTyp": {
+            "type": "integer",
+            "description": "Contract type : Identify whether it is a collective loan, a bank consortium or a business. 0: Individual.\n1: Joint account holder.\n2: Business consortium.\n3: Individual with bank consortium.\n4: Joint account holder with bank consortium.\n5: Business consortium with bank consortium.",
+            "format": "int32",
+            "example": 1
+          },
+          "applicantType": {
+            "type": "integer",
+            "description": "Loan applicant type (principal or bail)\n1: Principal.\n2: Co-titulaire.\n3: Garant, caution\n4: Shareholder.\n",
+            "format": "int32",
+            "example": 1
+          },
+          "acCredTyp": {
+            "type": "string",
+            "description": "Loan Type \"you will find it's values in table Credit types  \" ",
+            "example": "0001"
+          },
+          "acCredPurp": {
+            "type": "string",
+            "description": "Loan object that the loan finance (it could be a car, household appliances, home, medical, etc.) \"you will find it's values in table Object Finance \"",
+            "example": "01"
+          },
+          "acFinDt": {
+            "type": "string",
+            "description": "Loan release date in format yyyyMMdd",
+            "example": "1995-10-11"
+          },
+          "acInstFstDt": {
+            "type": "string",
+            "description": "Date of the 1st deadline of the loan in format yyyyMMdd not \"value is present in case of loan type 1\"",
+            "example": "1995-10-11"
+          },
+          "acInstTotNum": {
+            "type": "integer",
+            "description": "Total numbers of loan deadlines \"value is present in case of loan type 1\"",
+            "format": "int32"
+          },
+          "acInstDur": {
+            "type": "string",
+            "description": "Periodicity of loan deadlines described in months for type 1 \"value is present in case of loan type 1\""
+          },
+          "acCloDtEst": {
+            "type": "string",
+            "description": "Provisional closing date in format yyyyMMdd \"value is present in case of loan type 1\"",
+            "example": "1995-10-11"
+          },
+          "acCloDt": {
+            "type": "string",
+            "description": "Closing Date in format yyyyMMdd",
+            "example": "1995-10-11"
+          },
+          "acCloReas": {
+            "type": "string",
+            "description": "Closing reasons \"you will find it's values in table Closure reasons \"",
+            "example": "01"
+          },
+          "acCredModDt": {
+            "type": "string",
+            "description": "Modification date in format yyyyMMdd",
+            "example": "2010-02-11"
+          },
+          "acCredModReas": {
+            "type": "string",
+            "description": "Modification Reasons in case of Credit rescheduling, pricing, change of guarantee, etc ... \"you will find it's values in table Modification Reasons \""
+          },
+          "acCredTrmTyp": {
+            "type": "integer",
+            "description": "Type of loan mensuality it Contains:\n0: credit without deadline.\n1: credit with deadline.\n2: indefinite term (credit card).",
+            "format": "int32",
+            "example": 0
+          },
+          "acTrmTyp": {
+            "type": "integer",
+            "description": "Flag of loan bills Rate, it's either fix or variable,it contains :\n0 : fixe.\n1 : Variable.\n ",
+            "format": "int32",
+            "example": 0
+          },
+          "acIDCur": {
+            "type": "string",
+            "description": "Currency code of the requested loan \"you will find it's values in table Currency codes\" ",
+            "example": "AED"
+          },
+          "acCredAmnt": {
+            "type": "string",
+            "description": "Loan request amount"
+          },
+          "acPayMthd": {
+            "type": "integer",
+            "description": "Credit payment method \"you will find it's values in table Payment codes\"",
+            "format": "int32",
+            "example": 1
+          },
+          "ahInstAmnt": {
+            "type": "string",
+            "description": "Amount of loan bills\"value is present in case of loan type 1\""
+          },
+          "acInstFstAmnt": {
+            "type": "string",
+            "description": "Amount of the 1st bill of the loan \"value is present in case of loan type 1\""
+          },
+          "acGuarTyp": {
+            "type": "string",
+            "description": "Type of collateral provided for the requested loan, Contient :\n0 : sans garantie.\n1 : Réel.\n2 : Personnel.\n3 : Les deux.\n",
+            "example": "0"
+          },
+          "acSecPersAmnt": {
+            "type": "string",
+            "description": "Total amount of personal collaterals provided \"value is present in case of garantie type 2 or 3\""
+          },
+          "acSecRealAmnt": {
+            "type": "string",
+            "description": "Overall amount of actual collateral expected , \"value is present in case of garantie type 2 or 3\",Must be less than or equal to \"Authorized credit capital\".\nMandatory not filled in"
+          },
+          "ahAcctDt": {
+            "type": "string",
+            "description": "Date of last payment status in format yyy-MM-dd \"value is present in case of loan type 1 or 2\" ",
+            "example": "2010-10-11"
+          },
+          "ahPayStat": {
+            "type": "string",
+            "description": "Payment status , \"value is present in case of loan type 1 or 2\" , Provides information on the payment status of the last 36 months. 2 positions per month with the most recent in the beginning\n\"you will find it's values in table Codes paiement\"",
+            "example": "1"
+          },
+          "acPayLstDt": {
+            "type": "string",
+            "description": "Date of the last payment of loan bills in format yyyyMMdd \"value is present in case of loan type 1 \" ",
+            "example": "2020-11-12"
+          },
+          "ahInstPayDt": {
+            "type": "string",
+            "description": "loan bills settlement date in format yyyyMMdd \"value is present in case of loan type 1 \""
+          },
+          "ahInstDueNum": {
+            "type": "string",
+            "description": "Number of remaining loan payments \"value is present in case of loan type 1 \" "
+          },
+          "ahUsedAmnt": {
+            "type": "string",
+            "description": "Amount of credit used or in other terms capital \"value is present in case of loan type 0 pr 2 \""
+          },
+          "ahBal": {
+            "type": "string",
+            "description": "Remaining amount"
+          },
+          "ahInstArrNum": {
+            "type": "string",
+            "description": "Number of unpaid loan bills \"value is present in case of loan type 1 or 2\""
+          },
+          "ahPayMissLstDt": {
+            "type": "string",
+            "description": "Date of the last unpaid installment in format yyyyMMdd \"value is present in case of loan type 1 or 2\"",
+            "example": "20201112"
+          },
+          "ahBalArr": {
+            "type": "string",
+            "description": "Amount of unpaid loan bills \"value is present in case of loan type 1 or 2\" "
+          },
+          "ahNbrRet": {
+            "type": "string",
+            "description": "Number of late payments Browse history, if ahPayStat (i-1)> ahPayStat (i) then ahNbrRet is incremented by the difference ahPayStat (i-1) - ahPayStat (i). \"Only take into account codes 1 to 4.\""
+          },
+          "lastProcessDate": {
+            "type": "string",
+            "description": "Last date of treatment this allows you to define which period corresponds to the last load. in format yyyyMMdd",
+            "example": "20201112"
+          }
+        },
+        "description": "loan details"
+      },
+      "DetailRemConsoDTO": {
+        "type": "object",
+        "properties": {
+          "remarksfreetext": {
+            "type": "string",
+            "description": "Notes entered by an operator",
+            "example": "remarque"
+          },
+          "remarkstext": {
+            "type": "string",
+            "description": "System generated notes.",
+            "example": "generated"
+          },
+          "systodbdate": {
+            "type": "string",
+            "description": "Creation dates in date format yyyyMMdd",
+            "example": "20201011"
+          },
+          "sysupdatedbdate": {
+            "type": "string",
+            "description": "update date date format yyyyMMdd",
+            "example": "20201011"
+          }
+        },
+        "description": "Segment remarques"
+      },
+      "DetailRepDTO": {
+        "type": "object",
+        "properties": {
+          "idenP": {
+            "$ref": "#/components/schemas/IdenPDTO"
+          },
+          "idenm": {
+            "$ref": "#/components/schemas/IdenMDTO"
+          },
+          "adresse": {
+            "$ref": "#/components/schemas/AdresseDTO"
+          },
+          "actionm": {
+            "type": "array",
+            "description": "the data corresponding to the shareholders for a corporation",
+            "items": {
+              "$ref": "#/components/schemas/ActionMDTO"
+            }
+          },
+          "finanm": {
+            "$ref": "#/components/schemas/FinanMDTO"
+          },
+          "notep": {
+            "$ref": "#/components/schemas/NotePDTO"
+          },
+          "notem": {
+            "$ref": "#/components/schemas/NoteMDTO"
+          },
+          "detectp": {
+            "$ref": "#/components/schemas/DetectPDTO"
+          },
+          "detectm": {
+            "$ref": "#/components/schemas/DetectMDTO"
+          },
+          "reqprec": {
+            "type": "array",
+            "description": "frames the segments corresponding to a previous request on the Central Risks Office.",
+            "items": {
+              "$ref": "#/components/schemas/ReqPrecDTO"
+            }
+          },
+          "sommairedetails": {
+            "type": "array",
+            "description": "statistics by type of a loan",
+            "items": {
+              "$ref": "#/components/schemas/DetailSommaireDTO"
+            }
+          },
+          "detcredit": {
+            "type": "array",
+            "description": "loan details",
+            "items": {
+              "$ref": "#/components/schemas/DetailCreditDTO"
+            }
+          },
+          "infoneg": {
+            "type": "array",
+            "description": "supervises the segments corresponding to negative information known to the Central Risks.",
+            "items": {
+              "$ref": "#/components/schemas/InfnDTO"
+            }
+          },
+          "bouncedCheques": {
+            "$ref": "#/components/schemas/BouncedChequesDTO"
+          },
+          "remconsodetails": {
+            "type": "array",
+            "description": "Segment remarques",
+            "items": {
+              "$ref": "#/components/schemas/DetailRemConsoDTO"
+            }
+          },
+          "error": {
+            "type": "array",
+            "description": "credit info errors",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDTO"
+            }
+          }
+        },
+        "description": "the Details of this response"
+      },
+      "DetailSommaireDTO": {
+        "type": "object",
+        "properties": {
+          "sumacCredTyp": {
+            "type": "string",
+            "description": "Type of loan"
+          },
+          "sumCredTyp": {
+            "type": "string",
+            "description": "Number of loans by type of loan"
+          },
+          "sumahBal": {
+            "type": "string",
+            "description": "Remaining amount"
+          },
+          "sumacCredAmnt": {
+            "type": "string",
+            "description": "Amount Granted"
+          },
+          "sumahInstAmnt": {
+            "type": "string",
+            "description": "Monthly payment"
+          },
+          "sumahBalArr": {
+            "type": "string",
+            "description": "Total amounts of unpaid installments by type of credit"
+          },
+          "totCredTyp": {
+            "type": "string",
+            "description": "Loan type"
+          },
+          "totahBal": {
+            "type": "string",
+            "description": "Remaining amount"
+          },
+          "totacCredAmnt": {
+            "type": "string",
+            "description": "Amount Granted"
+          },
+          "totahInstAmnt": {
+            "type": "string",
+            "description": "Monthly payment"
+          },
+          "totahBalArr": {
+            "type": "string",
+            "description": "Total unpaid installment amounts"
+          }
+        },
+        "description": "statistics by type of a loan"
+      },
+      "DetectMDTO": {
+        "type": "object",
+        "properties": {
+          "buTotPosRuNb": {
+            "type": "integer",
+            "description": "Total number of rules triggered",
+            "format": "int32"
+          },
+          "buIDPosRu1": {
+            "type": "integer",
+            "description": "Triggered rule number 1",
+            "format": "int32"
+          },
+          "buIDPosRuNb1": {
+            "type": "integer",
+            "description": "Number of triggering rule 1",
+            "format": "int32"
+          },
+          "buIDPosRu2": {
+            "type": "integer",
+            "description": "Triggered rule number 2",
+            "format": "int32"
+          },
+          "buIDPosRuNb2": {
+            "type": "integer",
+            "description": "Number of triggering rule 2",
+            "format": "int32"
+          },
+          "buIDPosRu3": {
+            "type": "integer",
+            "description": "Triggered rule number 3",
+            "format": "int32"
+          },
+          "buIDPosRuNb3": {
+            "type": "integer",
+            "description": "Number of triggering rule 3",
+            "format": "int32"
+          },
+          "buIDPosRu4": {
+            "type": "integer",
+            "description": "Triggered rule number 4",
+            "format": "int32"
+          },
+          "buIDPosRuNb4": {
+            "type": "integer",
+            "description": "Number of triggering rule 4",
+            "format": "int32"
+          },
+          "buIDPosRu5": {
+            "type": "integer",
+            "description": "Triggered rule number 5",
+            "format": "int32"
+          },
+          "buIDPosRuNb5": {
+            "type": "integer",
+            "description": "Number of triggering rule 5",
+            "format": "int32"
+          },
+          "buIDPosRu6": {
+            "type": "integer",
+            "description": "Triggered rule number 6",
+            "format": "int32"
+          },
+          "buIDPosRuNb6": {
+            "type": "integer",
+            "description": "Number of triggering rule 6",
+            "format": "int32"
+          },
+          "buIDPosRu7": {
+            "type": "integer",
+            "description": "Triggered rule number 7",
+            "format": "int32"
+          },
+          "buIDPosRuNb7": {
+            "type": "integer",
+            "description": "Number of triggering rule 7",
+            "format": "int32"
+          },
+          "buIDPosRu8": {
+            "type": "integer",
+            "description": "Triggered rule number 8",
+            "format": "int32"
+          },
+          "buIDPosRuNb8": {
+            "type": "integer",
+            "description": "Number of triggering rule 8",
+            "format": "int32"
+          },
+          "buIDPosRu9": {
+            "type": "integer",
+            "description": "Triggered rule number 9",
+            "format": "int32"
+          },
+          "buIDPosRuNb9": {
+            "type": "integer",
+            "description": "Number of triggering rule 9",
+            "format": "int32"
+          },
+          "buIDPosRu10": {
+            "type": "integer",
+            "description": "Triggered rule number 10",
+            "format": "int32"
+          },
+          "buIDPosRuNb10": {
+            "type": "integer",
+            "description": "Number of triggering rule 10",
+            "format": "int32"
+          }
+        },
+        "description": "frames the segment corresponding to the inconsistency detection information concerning a physical person."
+      },
+      "DetectPDTO": {
+        "type": "object",
+        "properties": {
+          "coTotPosRuNb": {
+            "type": "integer",
+            "description": "Total number of rules triggered",
+            "format": "int32"
+          },
+          "coIDPosRu1": {
+            "type": "integer",
+            "description": "Triggered rule number 1",
+            "format": "int32"
+          },
+          "coIDPosRuNb1": {
+            "type": "integer",
+            "description": "Number of triggering rule 1",
+            "format": "int32"
+          },
+          "coIDPosRu2": {
+            "type": "integer",
+            "description": "Triggered rule number 2",
+            "format": "int32"
+          },
+          "coIDPosRuNb2": {
+            "type": "integer",
+            "description": "Number of triggering rule 2",
+            "format": "int32"
+          },
+          "coIDPosRu3": {
+            "type": "integer",
+            "description": "Triggered rule number 3",
+            "format": "int32"
+          },
+          "coIDPosRuNb3": {
+            "type": "integer",
+            "description": "Number of triggering rule 3",
+            "format": "int32"
+          },
+          "coIDPosRu4": {
+            "type": "integer",
+            "description": "Triggered rule number 4",
+            "format": "int32"
+          },
+          "coIDPosRuNb4": {
+            "type": "integer",
+            "description": "Number of triggering rule 4",
+            "format": "int32"
+          },
+          "coIDPosRu5": {
+            "type": "integer",
+            "description": "Triggered rule number 5",
+            "format": "int32"
+          },
+          "coIDPosRuNb5": {
+            "type": "integer",
+            "description": "Number of triggering rule 5",
+            "format": "int32"
+          },
+          "coIDPosRu6": {
+            "type": "integer",
+            "description": "Triggered rule number 6",
+            "format": "int32"
+          },
+          "coIDPosRuNb6": {
+            "type": "integer",
+            "description": "Number of triggering rule 6",
+            "format": "int32"
+          },
+          "coIDPosRu7": {
+            "type": "integer",
+            "description": "Triggered rule number 7",
+            "format": "int32"
+          },
+          "coIDPosRuNb7": {
+            "type": "integer",
+            "description": "Number of triggering rule 7",
+            "format": "int32"
+          },
+          "coIDPosRu8": {
+            "type": "integer",
+            "description": "Triggered rule number 8",
+            "format": "int32"
+          },
+          "coIDPosRuNb8": {
+            "type": "integer",
+            "description": "Number of triggering rule 8",
+            "format": "int32"
+          },
+          "coIDPosRu9": {
+            "type": "integer",
+            "description": "Triggered rule number 9",
+            "format": "int32"
+          },
+          "coIDPosRuNb9": {
+            "type": "integer",
+            "description": "Number of triggering rule 9",
+            "format": "int32"
+          },
+          "coIDPosRu10": {
+            "type": "integer",
+            "description": "Triggered rule number 10",
+            "format": "int32"
+          },
+          "coIDPosRuNb10": {
+            "type": "integer",
+            "description": "Number of triggering rule 10",
+            "format": "int32"
+          }
+        },
+        "description": "frames the segment corresponding to the inconsistency detection information concerning a physical person"
+      },
+      "EntityModelReponseDTO": {
+        "type": "object",
+        "properties": {
+          "entete": {
+            "$ref": "#/components/schemas/EnteteDTO"
+          },
+          "inforeq": {
+            "$ref": "#/components/schemas/InfoReqDTO"
+          },
+          "detailRepDTO": {
+            "$ref": "#/components/schemas/DetailRepDTO"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "ErrorDTO": {
+        "type": "object",
+        "properties": {
+          "errCode": {
+            "type": "string",
+            "description": "Error Code"
+          },
+          "errMes": {
+            "type": "string",
+            "description": "Error Message"
+          }
+        },
+        "description": "credit info errors"
+      },
+      "GenMDTO": {
+        "type": "object",
+        "properties": {
+          "beAppref": {
+            "type": "string",
+            "description": "Reference of the credit proposal provided in the request."
+          },
+          "beAppDt": {
+            "type": "string",
+            "description": "Date of the credit request entered in the request."
+          },
+          "beEnqTyp": {
+            "type": "string",
+            "description": "Event that led to the query entered in the request."
+          },
+          "beRespTyp": {
+            "type": "string",
+            "description": "Indicates the type of expected response entered in the request with value : 1 : Rapport de Solvabilité\n2 : RS avec Score\n3 : RS "
+          },
+          "beCredTyp": {
+            "type": "string",
+            "description": "Reference in the list of credit natures (DSB)."
+          },
+          "beCredPurp": {
+            "type": "integer",
+            "description": "Allows to identify the object of the financing in the loans (car, household appliances, home, medical, ...)",
+            "format": "int32"
+          },
+          "buIDTyp": {
+            "type": "string",
+            "description": "Type of identification document (Not filled in today Not filled in, field replaced by GM22 GM27) . with values : R : Registre de commerce\nI : Identifiant fiscal\nP : Patente\nA : Association\nS : Spécifique, autre"
+          },
+          "buID": {
+            "type": "string",
+            "description": "Identification code entered according to the value of the previous zone"
+          },
+          "beCredAmnt": {
+            "type": "string",
+            "description": "Authorised capital"
+          },
+          "beIDCur": {
+            "type": "string",
+            "description": "Currency code"
+          },
+          "buNm": {
+            "type": "string",
+            "description": "company name"
+          },
+          "buCrDt": {
+            "type": "string",
+            "description": "Creation date in yyyyMMdd format"
+          },
+          "coadUnFmAdr11": {
+            "type": "string",
+            "description": "Location number 1 is the 1st part of the Address: point of delivery (Apt or Letterbox n °).",
+            "example": "9"
+          },
+          "coadUnFmAdr21": {
+            "type": "string",
+            "description": "Location number 2 2nd part of the Address: Geographical point (Im, Building, Residence).",
+            "example": "mostakbal"
+          },
+          "coadUnFmAdr31": {
+            "type": "string",
+            "description": "Location number 3 3rd part of the Address: type number and description of the route.",
+            "example": "route al jadida"
+          },
+          "coadUnFmAdr41": {
+            "type": "string",
+            "description": "Location number 4 4th part of the address: locality (PO Box, District, ..).",
+            "example": "sidi maarouf"
+          },
+          "coadCi1": {
+            "type": "string",
+            "description": "Name City of the request"
+          },
+          "coadIDCi1": {
+            "type": "string",
+            "description": "the response that you will get in case of physical person request."
+          },
+          "coadPoCd1": {
+            "type": "string",
+            "description": "Postal code of the request"
+          },
+          "coadCntry1": {
+            "type": "string",
+            "description": "Country code of the request"
+          },
+          "coadStDt1": {
+            "type": "string",
+            "description": "Date of entry to this address of the request"
+          },
+          "buIDTraReg": {
+            "type": "string",
+            "description": "Trade register.\nFor SNC, SCS, SARL, SARL, SA, GIE, SCI, Consortia, holding companies; SCA."
+          },
+          "buIDTrib": {
+            "type": "string",
+            "description": "Court code of the commercial register."
+          },
+          "buIDFis": {
+            "type": "string",
+            "description": "Tax ID number. This is the second rank identifier for SNC, SCS, SARL, SARL, SA, GIE, SCI, Consortia, holding companies; SCA."
+          },
+          "buIDPat": {
+            "type": "string",
+            "description": "Patent number"
+          },
+          "buIDAsso": {
+            "type": "string",
+            "description": "For associations Identifier = visa number + prefecture code. This is the main identifier for Associations."
+          },
+          "buIDOther": {
+            "type": "string",
+            "description": "Identifier for other legal entities"
+          }
+        },
+        "description": "the response that you will get in case of corporation request."
+      },
+      "GenPDTO": {
+        "type": "object",
+        "properties": {
+          "beAppref": {
+            "type": "string",
+            "description": "Credit References",
+            "example": "65464651"
+          },
+          "beAppDt": {
+            "type": "string",
+            "description": "the date of requesting the loan. in yyyyMMdd",
+            "example": "20201115"
+          },
+          "beEnqTyp": {
+            "type": "string",
+            "description": "Reason of the Inquiry with values : 00 : Rapport de test ou Contrôle (CREDITINFO Maroc)\n01 : Demande de crédit\n02 : Renouvellement de Crédit\n03 : Rapport Client Final\n04 : Rapport du Groupe ",
+            "example": "01"
+          },
+          "beRespTyp": {
+            "type": "string",
+            "description": "Type of response requested with values:1 : Rapport Standard\n2 : Rapport Standard avec Score\n3 : Rapport Standard avec Score et Détection d’incohérences.",
+            "example": "1"
+          },
+          "beCredTyp": {
+            "type": "string",
+            "description": "Loan Type with values :0001 : Prêts à la consommation\n0002 : Financement à l’habitat \n0003 : Prêt à la promotion immobilière\n0004 : Financement automobile\n0005 : Prêts consolidé\n0006 : Crédit carte révolving\n0007 : Crédit-bail accordé aux personnes physiques\n0008 : Autres prêts accordés aux personnes physiques\n0012 : Autres financements participatifs\n",
+            "example": "0001"
+          },
+          "beCredPurp": {
+            "type": "integer",
+            "description": "Loan object with values : 01 : Voiture neuve\n02 : Voiture d’occasion\n03 : Camion, Autobus, Camionnette\n04 : Deux roues\n05 : Autre véhicule de loisirs\n06 : Ameublement\n07 : Hi-fi, Télévision\n",
+            "format": "int32",
+            "example": 1
+          },
+          "coIDTyp": {
+            "type": "string",
+            "description": "Identifier type wich is a Type of  document  dentification with values : I (CIN).\nC (carte séjour).\nP (passeport).\nD (Diplomatique).\n",
+            "example": "I"
+          },
+          "coID": {
+            "type": "string",
+            "description": "Identifiant wich is  code entered according to the value of the previous zone: ",
+            "example": "AB123456"
+          },
+          "beCredAmnt": {
+            "type": "string",
+            "description": "Authorised capital",
+            "example": "65846846"
+          },
+          "beIDCur": {
+            "type": "string",
+            "description": "Currency code of the authorized capital.",
+            "example": "MAD"
+          },
+          "coNm": {
+            "type": "string",
+            "description": "Last Name",
+            "example": "naji"
+          },
+          "coFnm": {
+            "type": "string",
+            "description": "First Name",
+            "example": "yassir"
+          },
+          "coSex": {
+            "type": "string",
+            "description": "Gender with values : M : Masculin.\nF : Féminin.\n",
+            "example": "M"
+          },
+          "coBirthDT": {
+            "type": "string",
+            "description": "BirthDate in format yyyyMMdd",
+            "example": "19951012"
+          },
+          "coadCi1": {
+            "type": "string",
+            "description": "City code of the request",
+            "example": "010"
+          },
+          "coadUnFmAdr11": {
+            "type": "string",
+            "description": "Location number 1 is the 1st part of the Address: point of delivery (Apt or Letterbox n °).",
+            "example": "9"
+          },
+          "coadUnFmAdr21": {
+            "type": "string",
+            "description": "Location number 2 2nd part of the Address: Geographical point (Im, Building, Residence).",
+            "example": "mostakbal"
+          },
+          "coadUnFmAdr31": {
+            "type": "string",
+            "description": "Location number 3 3rd part of the Address: type number and description of the route.",
+            "example": "route al jadida"
+          },
+          "coadUnFmAdr41": {
+            "type": "string",
+            "description": "Location number 4 4th part of the address: locality (PO Box, District, ..).",
+            "example": "sidi maarouf"
+          },
+          "coadIDCi1": {
+            "type": "string",
+            "description": "the response that you will get in case of physical person request."
+          },
+          "coadPoCd1": {
+            "type": "string",
+            "description": "Postal code of the request"
+          },
+          "coadCntry1": {
+            "type": "string",
+            "description": "Country code of the request"
+          },
+          "coadStDt1": {
+            "type": "string",
+            "description": "Date of entry to this address of the request"
+          }
+        },
+        "description": "the response that you will get in case of physical person request."
+      },
+      "IdenMDTO": {
+        "type": "object",
+        "properties": {
+          "buNm": {
+            "type": "string",
+            "description": "Social reason"
+          },
+          "buCrDt": {
+            "type": "string",
+            "description": "Creation date"
+          },
+          "buIDTrib": {
+            "type": "string",
+            "description": "Court code"
+          },
+          "buIDTraReg": {
+            "type": "string",
+            "description": "Commercial register"
+          },
+          "buIDFis": {
+            "type": "string",
+            "description": "Tax identification"
+          },
+          "buIDPat": {
+            "type": "string",
+            "description": "Patent"
+          },
+          "buIDAsso": {
+            "type": "string",
+            "description": "Association number"
+          },
+          "buIDOther": {
+            "type": "string",
+            "description": "Other ID"
+          },
+          "buAcro": {
+            "type": "string",
+            "description": "Acronym"
+          },
+          "buLegFo": {
+            "type": "string",
+            "description": "Legal form"
+          },
+          "buSize": {
+            "type": "string",
+            "description": "Size of the company"
+          },
+          "buIDPriAct": {
+            "type": "string",
+            "description": "Main activity code"
+          },
+          "buIDSecAct": {
+            "type": "string",
+            "description": "Secondary activity code"
+          },
+          "buIDEcon": {
+            "type": "string",
+            "description": "Economic agent code"
+          },
+          "buIDGroup": {
+            "type": "string",
+            "description": "Membership group"
+          },
+          "phNoB1": {
+            "type": "integer",
+            "description": "Office phone 1",
+            "format": "int32"
+          },
+          "phNoB2": {
+            "type": "integer",
+            "description": "Office phone 2",
+            "format": "int32"
+          },
+          "phNoB3": {
+            "type": "integer",
+            "description": "Office phone 3",
+            "format": "int32"
+          },
+          "phNoF": {
+            "type": "integer",
+            "description": "Fax",
+            "format": "int32"
+          },
+          "buBrFlag": {
+            "type": "integer",
+            "description": "flag branch",
+            "format": "int32"
+          },
+          "buHoIDTyp": {
+            "type": "string",
+            "description": "Seat identification type"
+          },
+          "buIDHo": {
+            "type": "string",
+            "description": "Main head office identifier"
+          },
+          "buHoNm": {
+            "type": "string",
+            "description": "Company name of the head office"
+          },
+          "sysupdatedbdate": {
+            "type": "string",
+            "description": "Date of update"
+          },
+          "systodbdate": {
+            "type": "string",
+            "description": "Creation date"
+          }
+        },
+        "description": "the segment corresponding to the identification information of the corporation."
+      },
+      "IdenPDTO": {
+        "type": "object",
+        "properties": {
+          "coNm": {
+            "type": "string",
+            "description": "Last name"
+          },
+          "coFnm": {
+            "type": "string",
+            "description": "First name"
+          },
+          "coIDTyp": {
+            "type": "string",
+            "description": "Type of identification document (CIN, passport...etc)."
+          },
+          "coID": {
+            "type": "string",
+            "description": "Identification code entered according to the value of the previous zone."
+          },
+          "coDelDt": {
+            "type": "string",
+            "description": "Date of issue"
+          },
+          "coExpDt": {
+            "type": "string",
+            "description": "Expiration date"
+          },
+          "coDelCntry": {
+            "type": "string",
+            "description": "Issuing country"
+          },
+          "coIDStEmp": {
+            "type": "string",
+            "description": "Official ID"
+          },
+          "coSex": {
+            "type": "string",
+            "description": "Gender"
+          },
+          "coBirthDT": {
+            "type": "string",
+            "description": "Date of Birth"
+          },
+          "coBirthPl": {
+            "type": "string",
+            "description": "Place of birth"
+          },
+          "coNat": {
+            "type": "string",
+            "description": "Nationality"
+          },
+          "coCateg": {
+            "type": "string",
+            "description": "Client Category"
+          },
+          "coMarSt": {
+            "type": "string",
+            "description": "Family status"
+          },
+          "coEmpCat": {
+            "type": "string",
+            "description": "Professional category code"
+          },
+          "buIDTrib": {
+            "type": "string",
+            "description": "Court code"
+          },
+          "buIDTraReg": {
+            "type": "string",
+            "description": "Commercial register"
+          },
+          "buIDFis": {
+            "type": "string",
+            "description": "Tax identification"
+          },
+          "buIDPat": {
+            "type": "string",
+            "description": "Patent"
+          },
+          "buNm": {
+            "type": "string",
+            "description": "Social reason"
+          },
+          "buCrDt": {
+            "type": "string",
+            "description": "Creation date"
+          },
+          "buAcro": {
+            "type": "string",
+            "description": "Acronym"
+          },
+          "buIDPriAct": {
+            "type": "string",
+            "description": "Main activity code"
+          },
+          "buIDEcon": {
+            "type": "string",
+            "description": "Economic agent code"
+          },
+          "phNoP": {
+            "type": "integer",
+            "description": "Personal phone number",
+            "format": "int32"
+          },
+          "phNoM": {
+            "type": "integer",
+            "description": "phone number",
+            "format": "int32"
+          },
+          "phNoT": {
+            "type": "integer",
+            "description": "business phone number",
+            "format": "int32"
+          },
+          "sysupdatedbdate": {
+            "type": "string",
+            "description": "Date of update"
+          },
+          "systodbdate": {
+            "type": "string",
+            "description": "Creation date"
+          }
+        },
+        "description": "the segment corresponding to the identification information of a physical person."
+      },
+      "InfnDTO": {
+        "type": "object",
+        "properties": {
+          "niDt": {
+            "type": "string",
+            "description": "Date of observation of negative information or incident"
+          },
+          "niTyp": {
+            "type": "string",
+            "description": "Type of negative information or incident"
+          },
+          "niAmnt": {
+            "type": "integer",
+            "description": "Amount of the incident",
+            "format": "int64"
+          },
+          "lastProcessDate": {
+            "type": "string",
+            "description": "Date of observation of negative information or incident"
+          },
+          "niCloseDt": {
+            "type": "string",
+            "description": "Release date"
+          },
+          "niIDSub": {
+            "type": "string",
+            "description": "Reporting institution"
+          }
+        },
+        "description": "supervises the segments corresponding to negative information known to the Central Risks."
+      },
+      "InfoReqDTO": {
+        "type": "object",
+        "properties": {
+          "genp": {
+            "$ref": "#/components/schemas/GenPDTO"
+          },
+          "genm": {
+            "$ref": "#/components/schemas/GenMDTO"
+          }
+        },
+        "description": "Information about the previous request corresponding to this response"
+      },
+      "NoteMDTO": {
+        "type": "object",
+        "properties": {
+          "buSco": {
+            "type": "integer",
+            "description": "Loan rating",
+            "format": "int32"
+          },
+          "buScoNar": {
+            "type": "string",
+            "description": "Comment"
+          }
+        },
+        "description": "frames the segment corresponding to the information in the credit rating of a corporation."
+      },
+      "NotePDTO": {
+        "type": "object",
+        "properties": {
+          "coSco": {
+            "type": "integer",
+            "description": "Loan rating",
+            "format": "int32"
+          },
+          "coScoNar": {
+            "type": "string",
+            "description": "Comment"
+          }
+        },
+        "description": "frames the segment corresponding to the information in the credit rating of a physical person."
+      },
+      "ReponseDTO": {
+        "type": "object",
+        "properties": {
+          "entete": {
+            "$ref": "#/components/schemas/EnteteDTO"
+          },
+          "inforeq": {
+            "$ref": "#/components/schemas/InfoReqDTO"
+          },
+          "detailRepDTO": {
+            "$ref": "#/components/schemas/DetailRepDTO"
+          }
+        }
+      },
+      "ReqPrecDTO": {
+        "type": "object",
+        "properties": {
+          "beAppDt": {
+            "type": "string",
+            "description": "Date of loan request"
+          },
+          "subscriberID": {
+            "type": "string",
+            "description": "Subscriber ID (loan institutions)"
+          },
+          "beCredTyp": {
+            "type": "string",
+            "description": "Loan Type (loan nature)"
+          },
+          "beApplicantType": {
+            "type": "integer",
+            "description": "Type of loan applicant (principal, surety, etc.)",
+            "format": "int32"
+          },
+          "beCredAmnt": {
+            "type": "string",
+            "description": "requested capital"
+          },
+          "beIDCur": {
+            "type": "string",
+            "description": "Currency code of the requested capital"
+          }
+        },
+        "description": "frames the segments corresponding to a previous request on the Central Risks Office."
+      },
+
+      "DemandeDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The demande id",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "description": "The demande status",
+            "enum": [
+              "INITIATED",
+              "SUBMITTED",
+              "SUPPORTED",
+              "IN_PROCESSING",
+              "REJECTED",
+              "NO_CONTINUATION",
+              "VALIDATED"
+            ]
+          },
+          "dateCreation": {
+            "type": "string",
+            "description": "The creation date",
+            "format": "date-time"
+          },
+          "simulation": {
+            "$ref": "#/components/schemas/SimulationDTO"
+          },
+          "canalSource": {
+            "type": "string",
+            "description": "The Canal source"
+          },
+          "demandeHistorySet": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DemandeHistoryDTO"
+            }
+          }
+        }
+      },
+      "DemandeHistoryDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "INITIATED",
+              "SUBMITTED",
+              "SUPPORTED",
+              "IN_PROCESSING",
+              "REJECTED",
+              "NO_CONTINUATION",
+              "VALIDATED"
+            ]
+          },
+          "changeDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+
+      "EntityModelPageDemandeDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DemandeDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "PageDemandeDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DemandeDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/Pageable"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Sort": {
+        "type": "object",
+        "properties": {
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+
+      "EntityModelMaxAmountResponseDTO": {
+        "type": "object",
+        "properties": {
+          "simulationId": {
+            "type": "integer",
+            "description": "the simulation id",
+            "format": "int64"
+          },
+          "maxAmount": {
+            "type": "integer",
+            "description": "the calculated max amount",
+            "format": "int32"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "MaxAmountResponseDTO": {
+        "type": "object",
+        "properties": {
+          "simulationId": {
+            "type": "integer",
+            "description": "the simulation id",
+            "format": "int64"
+          },
+          "maxAmount": {
+            "type": "integer",
+            "description": "the calculated max amount",
+            "format": "int32"
+          }
+        },
+        "description": "the calculated max amount response"
+      },
+ 
+    
+   
+      "EntityModelEcheanceMaxResponseDTO": {
+        "type": "object",
+        "properties": {
+          "echeanceMax": {
+            "type": "number",
+            "description": "the max echeance",
+            "format": "double"
+          },
+          "debtCapacity": {
+            "type": "boolean",
+            "description": "the debt capacity"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+
+     
+      "AmortizableLoanFileDTO": {
+        "type": "object",
+        "properties": {
+          "customerNumber": {
+            "type": "string",
+            "description": "Customer Number"
+          },
+          "displayedName": {
+            "type": "string",
+            "description": "full name of a customer"
+          },
+          "agreementNumber": {
+            "type": "number",
+            "description": "agreement number"
+          },
+          "amortizableLoanTypeDTO": {
+            "$ref": "#/components/schemas/AmortizableLoanTypeDTO"
+          },
+          "jointBorrowersNumber": {
+            "type": "integer",
+            "description": "Joint Borrower bumber"
+          },
+          "letterOfGuaranteeNumber": {
+            "type": "integer",
+            "description": "the full letter of the gurantee number"
+          },
+          "operationDTO": {
+            "$ref": "#/components/schemas/OperationDTO"
+          },
+          "establishmentDate": {
+            "type": "string",
+            "description": "Establishment date",
+            "format": "date-time"
+          },
+          "firstInstallmentDate": {
+            "type": "string",
+            "description": "First Installment Date",
+            "format": "date-time"
+          },
+          "lastInstallmentDate": {
+            "type": "string",
+            "description": "Last Installment Date",
+            "format": "date-time"
+          },
+          "installmentsNumber": {
+            "type": "integer",
+            "description": "Installments Number"
+          },
+          "totalInstallmentsNumber": {
+            "type": "integer",
+            "description": "total installments number"
+          },
+          "lastTriggeredInstallment": {
+            "type": "integer",
+            "description": "Last Triggred Installment"
+          },
+          "endOfMonthInstallment": {
+            "type": "boolean",
+            "description": "End of Month Installment"
+          },
+          "calculationBasedOnRealNumber": {
+            "type": "boolean",
+            "description": "Calculation Based On Real Number"
+          },
+          "amortizableLoanFinancingSourceDTO": {
+            "$ref": "#/components/schemas/AmortizableLoanFinancingSourceDTO"
+          },
+          "detaildeferralPeriodManagement": {
+            "type": "string",
+            "description": "The deferral Period Management details",
+            "enum": [
+              "E",
+              "S",
+              "I",
+              "C",
+              "R",
+              "D",
+              "G",
+              "U"
+            ]
+          },
+          "scheduleType": {
+            "type": "string",
+            "description": "Schedule type",
+            "enum": [
+              "D",
+              "C",
+              "O",
+              "P",
+              "N"
+            ]
+          },
+          "periodicityUnit": {
+            "type": "string",
+            "description": "Periodicity unit",
+            "enum": [
+              "M",
+              "J"
+            ]
+          },
+          "interestType": {
+            "type": "string",
+            "description": "Interest type",
+            "enum": [
+              "R",
+              "P",
+              "I",
+              "F",
+              "N"
+            ]
+          },
+          "baseRateVariation": {
+            "type": "number",
+            "description": "Base rate variation"
+          },
+          "loanAmount": {
+            "type": "number",
+            "description": "Loan amount"
+          },
+          "constantInstallmentAmount": {
+            "type": "number",
+            "description": "Constant installment amount"
+          },
+          "personalInvestmentAmount": {
+            "type": "number",
+            "description": "Personal investement amount"
+          },
+          "usedPersonalInvestmentAmount": {
+            "type": "number",
+            "description": "Used personal investement amount"
+          },
+          "offerExpiryDate": {
+            "type": "string",
+            "description": "Expiration date",
+            "format": "date-time"
+          },
+          "fileOpeningDate": {
+            "type": "string",
+            "description": "File Opening Date",
+            "format": "date-time"
+          },
+          "fileModificationDate": {
+            "type": "string",
+            "description": "File modification Date",
+            "format": "date-time"
+          },
+          "grantingDate": {
+            "type": "string",
+            "description": "Grating date",
+            "format": "date-time"
+          },
+          "lastFileStatusDate": {
+            "type": "string",
+            "description": "Last file Status Date",
+            "format": "date-time"
+          },
+          "lastReviewDate": {
+            "type": "string",
+            "description": "Last review date",
+            "format": "date-time"
+          },
+          "acquiredLoanAmount": {
+            "type": "number",
+            "description": "Acquired loan amount"
+          },
+          "totalAmountPaidDownPayment": {
+            "type": "number",
+            "description": "Total amount paid Down payment"
+          },
+          "renegociatedFile": {
+            "type": "boolean",
+            "description": "renegociated file"
+          },
+          "creditTitle": {
+            "type": "string",
+            "description": "Credit Title"
+          },
+          "specificCode": {
+            "type": "string",
+            "description": "Specific code"
+          },
+          "socialHousingFile": {
+            "type": "boolean",
+            "description": "Social housing file"
+          },
+          "printCode": {
+            "type": "string",
+            "description": "Print code"
+          }
+        },
+        "description": "basic information and details of a specific loan"
+      },
+      "AmortizableLoanFinancingSourceDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code referencing the loan financing resource"
+          },
+          "designation": {
+            "type": "string",
+            "description": "designation of each loan financing resource code"
+          }
+        },
+        "description": "basic information about amortizable loan financing resource"
+      },
+      "AmortizableLoanTypeDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Loan type code"
+          },
+          "label": {
+            "type": "string",
+            "description": "Loan type label"
+          }
+        },
+        "description": "Loan types with their explenation"
+      },
+      "EchprtDetailAmortisationDTO": {
+        "type": "object",
+        "properties": {
+          "calculatedAmortisation": {
+            "type": "number",
+            "description": "Calculated amortisation"
+          },
+          "inputAmortisation": {
+            "type": "number",
+            "description": "Input amortisation"
+          },
+          "unpaidAmortisation": {
+            "type": "number",
+            "description": "Unpaid amortisation"
+          }
+        },
+        "description": "Details of amortisation"
+      },
+      "EchprtDetailCapitalTaxDTO": {
+        "type": "object",
+        "properties": {
+          "capitalTax": {
+            "type": "number",
+            "description": "Capital tax"
+          },
+          "unpaidCapitalTax": {
+            "type": "number",
+            "description": "Unpaid capital tax"
+          },
+          "distributedDeferredCapitalTax": {
+            "type": "number",
+            "description": "Distributed Deferred Capital Tax"
+          }
+        },
+        "description": "DetailS of capital tax"
+      },
+      "EchprtDetailCommissionDTO": {
+        "type": "object",
+        "properties": {
+          "commission": {
+            "type": "number",
+            "description": "The commission"
+          },
+          "unpaidCommission": {
+            "type": "number",
+            "description": "The unpaid commission"
+          },
+          "calledCommission": {
+            "type": "number",
+            "description": "The called commission"
+          },
+          "distributedDeferredCommission": {
+            "type": "number",
+            "description": "The distributed deferred commission"
+          },
+          "commissionTax": {
+            "type": "number",
+            "description": "the commission tax"
+          },
+          "unpaidCommissionTax": {
+            "type": "number",
+            "description": "The unpaid commission tax"
+          },
+          "calledCommissionTax": {
+            "type": "number",
+            "description": "The called Commission tax"
+          },
+          "distributedDeferredCommissionTax": {
+            "type": "number",
+            "description": "The distributed Deferred Commission Tax"
+          }
+        },
+        "description": "The details of each commission"
+      },
+      "EchprtDetailCommitmentFeeDTO": {
+        "type": "object",
+        "properties": {
+          "commitmentFee": {
+            "type": "number",
+            "description": "Commitment fee"
+          },
+          "unpaidCommitmentFee": {
+            "type": "number",
+            "description": "Unpaid Commitment Fee"
+          },
+          "commitmentFeeTax": {
+            "type": "number",
+            "description": "Commitment Fee Tax"
+          },
+          "unpaidCommitmentFeeTax": {
+            "type": "number",
+            "description": "unpaid Comitment Fee Tax"
+          }
+        },
+        "description": "Detail commitment fee"
+      },
+      "EchprtDetailFeesDTO": {
+        "type": "object",
+        "properties": {
+          "fees": {
+            "type": "number",
+            "description": "Fees"
+          },
+          "unpaidFees": {
+            "type": "number",
+            "description": "Unpaid fees"
+          },
+          "calledFees": {
+            "type": "number",
+            "description": "Called Fees"
+          },
+          "distributedDeferredFees": {
+            "type": "number",
+            "description": "Distributed deferred fees"
+          },
+          "feesTax": {
+            "type": "number",
+            "description": "Fees Tax"
+          },
+          "unpaidFeesTax": {
+            "type": "number",
+            "description": "Unpaid Fees Tax"
+          },
+          "calledFeesTax": {
+            "type": "number",
+            "description": "Called Fees Tax"
+          },
+          "distributedDeferredFeesTax": {
+            "type": "number",
+            "description": "Distributed Deferred Fees Tax"
+          }
+        },
+        "description": "Fees details"
+      },
+      "EchprtDetailInterestDTO": {
+        "type": "object",
+        "properties": {
+          "interest": {
+            "type": "number",
+            "description": "Total intrest"
+          },
+          "unpaidInterest": {
+            "type": "number",
+            "description": "Unpaid intrest"
+          },
+          "calledInterest": {
+            "type": "number",
+            "description": "Called intrest"
+          },
+          "distributedDeferredInterest": {
+            "type": "number",
+            "description": "Distributed deferred intrest"
+          },
+          "interestTax": {
+            "type": "number",
+            "description": "Tax intrest"
+          },
+          "unpaidInterestTax": {
+            "type": "number",
+            "description": "Unpaid intrest tax"
+          },
+          "calledInterestTax": {
+            "type": "number",
+            "description": "Called interest tax"
+          },
+          "distributedDeferredInterestTax": {
+            "type": "number",
+            "description": "Distributed deferred intrest tax"
+          }
+        },
+        "description": "Details of Loan interest "
+      },
+      "EchprtDetailPenaltiesDTO": {
+        "type": "object",
+        "properties": {
+          "penalties": {
+            "type": "number",
+            "description": "penalties"
+          },
+          "unpaidPenalties": {
+            "type": "number",
+            "description": "Unpaid penalties"
+          },
+          "penaltiesTax": {
+            "type": "number",
+            "description": "Penalties tax"
+          },
+          "unpaidPenaltiesTax": {
+            "type": "number",
+            "description": "Unpaid penalties tax"
+          }
+        },
+        "description": "Panlties Details"
+      },
+      "EchprtDetailRevenueStampDTO": {
+        "type": "object",
+        "properties": {
+          "revenueStamp": {
+            "type": "number",
+            "description": "revenue stamp"
+          },
+          "unpaidRevenueStamp": {
+            "type": "number",
+            "description": "Unpaid revenue stamp"
+          },
+          "calledRevenueStamp": {
+            "type": "number",
+            "description": "Called revenue stamp"
+          },
+          "distributedDeferredRevenueStamp": {
+            "type": "number",
+            "description": "Distributed deferred revenue stamp"
+          }
+        },
+        "description": "The Details of revenie stamp"
+      },
+ 
+      "GetAmortizableLoanDetailDTO": {
+        "type": "object",
+        "properties": {
+          "amortizableLoanFile": {
+            "$ref": "#/components/schemas/AmortizableLoanFileDTO"
+          },
+          "repaymentSchedule": {
+            "type": "array",
+            "description": "anything have to do with the timing and the scheduling of a loan",
+            "items": {
+              "$ref": "#/components/schemas/GetAmortizableLoanInstallmentListDTO"
+            }
+          }
+        },
+        "description": "Contains the detail of each Amortizable loan"
+      },
+      "GetAmortizableLoanInstallmentListDTO": {
+        "type": "object",
+        "properties": {
+          "calculationDate": {
+            "type": "string",
+            "description": "Calculation Date",
+            "format": "date-time"
+          },
+          "interest": {
+            "$ref": "#/components/schemas/EchprtDetailInterestDTO"
+          },
+          "amortisation": {
+            "$ref": "#/components/schemas/EchprtDetailAmortisationDTO"
+          },
+          "commission1": {
+            "$ref": "#/components/schemas/EchprtDetailCommissionDTO"
+          },
+          "commission2": {
+            "$ref": "#/components/schemas/EchprtDetailCommissionDTO"
+          },
+          "commission3": {
+            "$ref": "#/components/schemas/EchprtDetailCommissionDTO"
+          },
+          "fees": {
+            "$ref": "#/components/schemas/EchprtDetailFeesDTO"
+          },
+          "capitalTax": {
+            "$ref": "#/components/schemas/EchprtDetailCapitalTaxDTO"
+          },
+          "commitmentFee": {
+            "$ref": "#/components/schemas/EchprtDetailCommitmentFeeDTO"
+          },
+          "interestOnUnpaidAmount": {
+            "$ref": "#/components/schemas/EchprtDetailInterestDTO"
+          },
+          "penalties": {
+            "$ref": "#/components/schemas/EchprtDetailPenaltiesDTO"
+          },
+          "revenueStamp": {
+            "$ref": "#/components/schemas/EchprtDetailRevenueStampDTO"
+          }
+        },
+        "description": "additional details of amortizable loan"
+      },
+      "OperationDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "the code of the operation"
+          },
+          "designation": {
+            "type": "string",
+            "description": "the designation of the operation"
+          }
+        },
+        "description": "loan operations description"
+      },
+      "AmortizableLoanDTO": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Loan folder reference"
+          },
+          "remainingCapital": {
+            "type": "number",
+            "description": "Remaining capital"
+          },
+          "loanType": {
+            "type": "string",
+            "description": "Loan type"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "The branch references"
+          },
+          "fileNumber": {
+            "type": "string",
+            "description": "File number"
+          },
+          "amendmentNumber": {
+            "type": "number",
+            "description": "amendment number"
+          },
+          "borrowedCapital": {
+            "type": "number",
+            "description": "Borrowed capital"
+          },
+          "initialDuration": {
+            "type": "integer",
+            "description": "Initial duration in months",
+            "format": "int32"
+          },
+          "monthlyInstallment": {
+            "type": "number",
+            "description": "Monthly installment"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "end Date",
+            "format": "date-time"
+          }
+        },
+        "description": "contains the information of amortizable loan "
+      },
+
+      "GetLoanListResponseDTO": {
+        "type": "object",
+        "properties": {
+          "amortizableLoans": {
+            "type": "array",
+            "description": "loans list",
+            "items": {
+              "$ref": "#/components/schemas/AmortizableLoanDTO"
+            }
+          }
+        },
+        "description": "contains a list of Amortizable loans"
+      },
+	        "SimulationDTO": {
+        "required": [
+          "capital",
+          "duration",
+          "jobType",
+          "rate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The simulation id",
+            "format": "int64"
+          },
+          "capital": {
+            "type": "number",
+            "description": "The capital of a prospect or a potential client ",
+            "format": "double",
+            "example": 100000
+          },
+          "duration": {
+            "type": "integer",
+            "description": "The duration of the loan",
+            "format": "int32",
+            "example": 36
+          },
+          "rate": {
+            "type": "number",
+            "description": "The rate of the loan",
+            "format": "double",
+            "example": 0.069
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the client",
+            "example": "Reda"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the client",
+            "example": "salmi"
+          },
+          "status": {
+            "type": "string",
+            "description": "The simulation status",
+            "example": "VALIDATED",
+            "enum": [
+              "INITIATED",
+              "VALIDATED"
+            ]
+          },
+          "customerNumber": {
+            "type": "string",
+            "description": "The Custome id",
+            "example": "000144144"
+          },
+          "prospectId": {
+            "type": "string",
+            "description": "The prospect id",
+            "example": "1"
+          },
+          "jobType": {
+            "type": "string",
+            "description": "The Type of job",
+            "example": "Fonctionnaire"
+          },
+          "echeance": {
+            "type": "number",
+            "description": "The mensualite calculated by the loan simulator",
+            "format": "double",
+            "example": 3000
+          },
+          "simulationType": {
+            "type": "string",
+            "description": "The simulation type",
+            "example": "SIMULATION",
+            "enum": [
+              "SIMULATION",
+              "PROPOSITION"
+            ]
+          },
+          "canalSource": {
+            "type": "string",
+            "description": "The Canal source",
+            "example": "CREDIT_BFF"
+          }
+        },
+        "description": "The simulation detail"
+      },
+
+      "LoanSimulationResponseDTO": {
+        "type": "object",
+        "properties": {
+          "simulationId": {
+            "type": "integer",
+            "description": "the simulation id",
+            "format": "int64"
+          },
+          "echeance": {
+            "type": "number",
+            "description": "the mensualite calculated by the loan simulator",
+            "format": "double"
+          }
+        },
+        "description": "the loan simulator will returning the mensulate calculated "
+      }
+    },
+    "securitySchemes": {
+      "spring_oauth": {
+        "type": "oauth2",
+        "description": "Oauth2 flow",
+        "flows": {
+          "clientCredentials": {
+            "authorizationUrl": "http://sso-sandbox.sgmaroc.root.net/auth/realms/realm-api/protocol/openid-connect/auth",
+            "tokenUrl": "http://sso-sandbox.sgmaroc.root.net/auth/realms/realm-api/protocol/openid-connect/token",
+            "refreshUrl": "http://sso-sandbox.sgmaroc.root.net/auth/realms/realm-api/protocol/openid-connect/token",
+            "scopes": {
+              "read": "read scope",
+              "write": "write scope"
+            }
+          }
+        }
+      }
+    }
+  }
+}
