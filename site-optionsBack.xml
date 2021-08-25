@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-lazy-init="true" xsi:schemaLocation="            http://www.springframework.org/schema/beans            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd            http://www.springframework.org/schema/webflow-config            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
+ <bean class="properties.BoReportBean" id="boReportBean">
+      <property name="boOutilReport" value="JASPER" />
+      <property name="boLinkViewURLJasper" value="http://masterleasefrtlt01.sgmaroc.root.net:8900/jasperserver/" />
+      <property name="ParentFolderUriJasper" value= "/reports/SGM45"/>
+      <property name="boJasperUser" value="jasperadmin" />
+      <property name="boJasperPwd" value="jasperadmin" />
+      <property name="boIntegrationEnabled" value="YES"/>
+      <property name="boIntegrationMandatory" value="NO"/>
+      <property name="boReportLinkTitle" value="Jasper Reports"/>
+      <property name="boServer" value="masterleasefrtlt01.sgmaroc.root.net"/>
+      <property name="boInfoViewURI" value="InfoView/logon/logon.do"/>
+      <property name="boServerURL" value="http://slnxcasslx1.tuni.tn.ssg:8780/businessobjects/enterprise115/desktoplaunch/"/>
+      <property name="boUser" value="Admin"/>
+      <property name="boPocFolder" value=""/>
+      <property name="boReportPasswordFile" value=""/>
+   </bean>  
+  <bean class="properties.BatchPropertiesBean" id="batchPropertiesBean">
+      <property name="schemaCible" value="TRSGM45DEV"/>
+      <property name="edinatSharedLocation" value="/cassiopae/Tomcat/SGMDEV/tomcat/tmp/work/batch/output"/>
+      <property name="batchSharedLocation" value="/cassiopae/Tomcat/SGMDEV/tomcat/tmp/work/batch/temp"/>
+      <property name="fileSeparator" value="/"/>
+      <property name="batchServiceRemotelyDeployed" value="false"/>
+   </bean>
+   <bean class="properties.DocumentPropertiesBean" id="documentPropertiesBean">
+      <property name="serverPath" value="/cassiopae/Tomcat/SGMDEV/generatedDocs"/>
+      <property name="tempFolderPath" value="/cassiopae/Tomcat/SGMDEV/generatedDocs/temp"/>
+      <property name="approvedFilesFolderPath" value="/cassiopae/Tomcat/SGMDEV/generatedDocs"/>
+      <property name="openAllDocuments" value="false"/>
+      <property name="downloadFolder">
+         <map>
+            <entry key="reportDesignerOutput" value="/prod/cassiopae"/>
+            <entry key="drmInput" value="/prod/cassiopae"/>
+            <entry key="drmOutput" value="/prod/cassiopae"/>
+         </map>
+      </property>
+   </bean>
+   <bean class="properties.PrintingPropertiesBean" id="printingPropertiesBean">
+      <property name="exeJVM" value="java"/>
+      <property name="classPath" value="-cp ./LanceEditionClient.jar;./log4j.jar;./commun.jar"/>
+      <property name="classeJava" value="com.orfi.lanceEdition.LanceEdition"/>
+      <property name="URLhost" value="http://unknown:80/openprint/servlet/"/>
+      <property name="descParmTypeDoc" value="typDoc"/>
+      <property name="descParmExt" value="ext"/>
+      <property name="descParmExtCom" value="c_ext"/>
+      <property name="descParmExtFich" value="fs_ext"/>
+      <property name="descParmFree" value="edFree"/>
+      <property name="descParmFreeCom" value="c_edFree"/>
+      <property name="descParmFreeFichEnt" value="fe_edFree"/>
+      <property name="descParmFreeFichSort" value="fs_edFree"/>
+   </bean>
+   <bean class="com.cassiopae.webservicesproxy.beans.WebServicesProxyPropertiesBean" id="webServicesProxyPropertiesBean">
+      <property name="wsdlLocation" value="http://masterleasefrtlt01.sgmaroc.root.net:8780/CassiopaeWebServicesSGMDEV/CassiopaeServiceSoapHttpPort?wsdl"/>
+   </bean>
+   <bean class="com.cassiopae.framework.report.config.ReportFrameworkConfiguration" id="reportFrameworkConfiguration">
+      <property name="reportsFolder" value="%REPORT_FOLDER_PATH%"/>
+      <property name="remote" value="false"/>
+      <property name="reportJasperServletUrl" value="/ReportJasperServlet"/>
+   </bean>
+   <bean class="properties.LocaleBean" id="localeBean">
+      <property name="defaultLocale" value="fr_MA"/>
+   </bean>
+   <bean class="java.lang.Boolean" id="finEngineRemotelyDeployed">
+      <constructor-arg>
+         <value>false</value>
+      </constructor-arg>
+   </bean>
+   <bean class="com.cassiopae.framework.client.web.gui.clientidgen.ClientIDGenStrategies" factory-method="valueOf" id="clientIdGenStrategy">
+      <constructor-arg type="java.lang.String" value="DEFAULT"/>
+   </bean>
+   <bean class="com.cassiopae.framework.ws.dateformatter.WebServicesDateFormatter" id="webServicesDateFormatter">
+      <property name="wsDateFormatter" value="DEFAULT"/>
+   </bean>
+   <bean class="java.lang.String" id="webServiceMessageFormat">
+      <constructor-arg type="java.lang.String" value="SOAP"/>
+   </bean>
+   <bean class="com.cassiopae.cassiopae.view.unification.UnificationDisplayOptionsBean" id="unificationDisplayOptions">
+      <property name="allowUnification">
+         <value>true</value>
+      </property>
+      <property name="frontUrl" value="http://masterleasefrtlt01.sgmaroc.root.net:8781/FrontV4SGMDEVFO"/>
+      <property name="frontLogoutUrl" value="http://masterleasefrtlt01.sgmaroc.root.net:8781/FrontV4SGMDEVFO/loggingOut.jspx"/>
+   </bean>
+   <bean class="com.cassiopae.cassiopae.common.shared.options.AdministratorOptions" id="administratorOptions">
+      <property name="logFilesDirectory" value="/cassiopae/Tomcat/SGMDEV/SGMDEV/logs"/>
+      <property name="showErrorToggleLink" value="true"/>
+      <property name="openInNewWindow" value="false"/>
+      <!--
+	    &lt;property name="logFilesDirectoryPerGroupMap"&gt;
+	        &lt;map&gt;
+	            &lt;entry key="ui" value="%ADMINISTRATORLOG%"/&gt;
+	            &lt;entry key="ui_ws" value=""/&gt;
+	            &lt;entry key="doc1" value=""/&gt;
+	        &lt;/map&gt;
+        &lt;/property&gt; 
+	    -->
+
+   </bean>
+   <bean class="properties.ConnPropertiesBean" id="connPropertiesBean">
+      <property name="appId" value="%APP_ID%"/>
+      <property name="connMode" value="STANDARD"/>
+      <property name="ugeCode" value="_ORIG_"/>
+      <property name="logoutURL" value="%LOG_OUT_URL%"/>
+      <property name="securityContext" value="%SSO_DATA%"/>
+      <property name="isEnableLdapFailureAuth" value="false"/>
+   </bean>
+   <bean class="properties.ApplicationConfigBean" id="applicationConfigBean">
+      <property name="partialReadOn" value="false"/>
+      <property name="cssSkinFamily" value="45_2016"/>
+      <property name="cacheRecentItem" value="true"/>
+      <property name="asyncLoggingInterval" value="10000"/>
+      <property name="remoteUserInUpperCase">
+         <value>true</value>
+      </property>
+   </bean>
+   <bean class="com.cassiopae.framework.server.util.cache.CacheControlBean" id="cacheControlBean">
+      <property name="procCacheEnabled" value="true"/>
+      <property name="tableDescCacheEnabled" value="true"/>
+      <property name="cachDuration" value="7200000"/>
+   </bean>
+   <bean class="java.lang.String" id="selectedSectionDisplayConfigID">
+      <constructor-arg value="TAB"/>
+   </bean>
+   <bean class="com.cassiopae.framework.ws.config.WSDataValidationOptions" id="wSDataValidationOptions">
+      <property name="validateFieldSizes" value="false"/>
+      <property name="validateForeignKeys" value="false"/>
+   </bean>
+   <bean class="java.lang.String" id="webserviceAuthMode">
+      <constructor-arg value="MIXED"/>
+   </bean>
+   <!-- OTHER OPTIONS -->
+
+   <!--
+	
+	&lt;bean id="customLogoInfo" class="com.cassiopae.cassiopae.view.startup.customlogo.CustomLogoInfo"&gt;
+		&lt;property name="loginContentTop" value="%LOGO_STYLE%"&gt;&lt;/property&gt;
+	&lt;/bean&gt;	
+	
+	&lt;bean id="psymaxselectWebService" class="java.lang.Integer"&gt;
+		&lt;constructor-arg&gt;
+		  &lt;value&gt;%PSYMAXSELECT_WEBSERVICE%&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+	&lt;/bean&gt; 
+	&lt;bean id="accessLoggingBean" class="properties.AccessLoggingBean"&gt;
+		&lt;property name="accessLogLocation" value="C:/accesslog/testAccess.log"/&gt;
+		&lt;property name="activateAccessLogging" value="false"/&gt;
+	&lt;/bean&gt;  	 
+	&lt;bean id="iasServiceConfig" class="com.cassiopae.cassiopae.container.filters.ias.IASServiceConfig"&gt;
+        &lt;property name="loginPageUrl" value="https://tmyesso.hyundaicommercial.com/ia/iaself/login.jsp?systemCode=HCOB&amp;amp;nl_type=ko_KR;" /&gt;
+        &lt;property name="serverCallbackRemoteHost" value="1PP1111200711.hc.com" /&gt;
+		&lt;property name="loginPageUrl" value="http://localhost:7101/ia/iaself/login_ksiop_test.jsp?nl_type=ko_KR&amp;amp;systemCode=KSIOPB&amp;amp;parameter=CassiopaeTest" /&gt;
+        &lt;property name="serverCallbackRemoteHost" value="127.0.0.1" /&gt;
+        &lt;property name="otpServiceCompanyCode" value="tcommercial" /&gt;
+        &lt;property name="otpServiceServiceFlag" value="tcsksiopotpflag" /&gt;
+    &lt;/bean&gt;	
+	&lt;bean id="frontExtUrlBean" class="com.cassiopae.cassiopae.view.deal.frontDealIntegration.FrontExtUrlBean"&gt;
+		&lt;property name="frontExtUrl" value="http://172.29.248.243:7721/FrontV4FRONT45"/&gt;
+	&lt;/bean&gt;-->
+
+   <!-- Product Unification -->
+
+   <bean class="com.cassiopae.cassiopae.common.shared.options.DeploymentOptions" id="deploymentOptions">
+      <property name="cassiopaeBackOfficeApplicationURL" value="http://masterleasefrtlt01.sgmaroc.root.net:8780/CassiopaeSGMDEV"/>
+      <property name="cassiopaeFrontOfficeApplicationURL" value="http://masterleasefrtlt01.sgmaroc.root.net:8781/FrontV4SGMDEVFO"/>
+   </bean>
+   <!--
+		&lt;bean id="minDateRange" class="java.util.HashMap"&gt;
+    &lt;constructor-arg&gt;
+        &lt;map key-type="java.lang.String" value-type="java.lang.String"&gt;
+            &lt;entry key="DATE" value="1"/&gt;
+            &lt;entry key="MONTH" value="0"/&gt;
+            &lt;entry key="YEAR" value="1800"/&gt;
+            &lt;entry key="HOUR" value="0"/&gt;
+            &lt;entry key="MINUTE" value="0"/&gt;
+            &lt;entry key="SECOND" value="0"/&gt;
+        &lt;/map&gt;
+    &lt;/constructor-arg&gt;
+	&lt;/bean&gt;
+	&lt;bean id="maxDateRange" class="java.util.HashMap"&gt;
+		&lt;constructor-arg&gt;
+			&lt;map key-type="java.lang.String" value-type="java.lang.String"&gt;
+				&lt;entry key="DATE" value="31"/&gt;
+				&lt;entry key="MONTH" value="11"/&gt;
+				&lt;entry key="YEAR" value="9999"/&gt;
+				&lt;entry key="HOUR" value="23"/&gt;
+				&lt;entry key="MINUTE" value="59"/&gt;
+				&lt;entry key="SECOND" value="59"/&gt;
+			&lt;/map&gt;
+		&lt;/constructor-arg&gt;
+	&lt;/bean&gt;
+	&lt;bean id="ssoServiceConfig" class="com.cassiopae.cassiopae.container.filters.ias.SSOServiceConfig"&gt;
+		&lt;property name="ssoSourceSystemCode" value="%SSO_SOURCE_SYSTEM_CODE%" /&gt;
+		&lt;property name="companyCode" value="%COMPANY_CODE%" /&gt;
+	&lt;/bean&gt;
+	&lt;bean id="isEnableAsynchronousLogging" class="java.lang.Boolean"&gt;
+		&lt;constructor-arg&gt;
+			&lt;value&gt;true&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+	&lt;/bean&gt;
+	&lt;bean id="unificationCipherUtils" class="com.cassiopae.cassiopae.view.unification.UnificationCipherUtils"&gt;
+        &lt;property name="algorithm" value="AES"/&gt;
+        &lt;property name="secretKeyGeneratorString" value="password12345678"/&gt;
+        &lt;property name="cipherInstance" value="AES/CBC/PKCS5Padding"/&gt;
+        &lt;property name="paramIdentifierKey" value="tid"/&gt;
+	&lt;/bean&gt;
+	&lt;bean id="byPassOtpAuth" class="java.lang.Boolean"&gt;
+		&lt;constructor-arg value="true" /&gt;
+	&lt;/bean&gt;
+	-->
+
+   <!--This is for NLSC in case of MDWARE Editique document generation-->
+
+   <bean class="java.lang.String" id="editiqueMDWAREUrl">
+      <constructor-arg>
+         <value>%MDWARE_REST_URL_LOCATION%</value>
+      </constructor-arg>
+   </bean>
+   <bean class="java.lang.Boolean" id="compressionOption">
+      <constructor-arg value="%COMPRESSIONOPTION%"/>
+   </bean>
+   <bean class="com.cassiopae.cassiopae.common.shared.options.MailOptions" id="mailOptions" lazy-init="true">
+      <property name="smtpHost">
+         <value>%MAILOPTIONS_SMTPHOST%</value>
+      </property>
+      <property name="user">
+         <value>%MAILOPTIONS_USER%</value>
+      </property>
+      <property name="password">
+         <value>%MAILOPTIONS_PASSWORD%</value>
+      </property>
+      <property name="senderEmail">
+         <value>%MAILOPTIONS_SENDEREMAIL%</value>
+      </property>
+   </bean>
+   <bean class="java.lang.Boolean" id="printStacktraceWS">
+      <constructor-arg value="%PRINTSTACKTRACEWS%"/>
+   </bean>
+</beans>
