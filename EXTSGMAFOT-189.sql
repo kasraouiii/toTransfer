@@ -346,5 +346,12 @@ commit ;
 
 
 
+===
+
+EXTSGMAFOT-191 :  
+
+update rulvalue set rulidvalue ='300762' where rulid =4007 and rulidvalue=1002 ;
+commit;
+
 
 
