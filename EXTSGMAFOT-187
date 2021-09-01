@@ -1,0 +1,6 @@
+Insert into LANRULE (RULID,LANCODE,RULLABEL) values ('4013','FR','Demande transfert');
+
+
+update rulvalue set rulidvalue =1003 where rulid =4013 and rulidvalue=300760 ;
+
+update rulvalue set rulidvalue =1002 where rulid =4009 and rulidvalue=300762 ;
