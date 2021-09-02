@@ -438,7 +438,8 @@ update wstjump set rulid =3007138 where worcode='WFCLIPRO' and wstorder=18 and w
 update cddrul set rulid =3007139 where cddordre = 10185 and cseid =108 and rulid=4013 ;
 
 ===
-
+update wstjump set rulid=3007138 where rulid=4009 and worcode='WFCLIPRO' and wstorder=27;
+=====
 EXTSGMAFOT-191 :  
 
 update rulvalue set rulidvalue ='300762' where rulid =4007 and rulidvalue=1002 ;
