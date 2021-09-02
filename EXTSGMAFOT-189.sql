@@ -374,6 +374,69 @@ update wstconsequence set WSCACTIONTYPE= 'CLOSE_FORMALITE' where worcode='WFCLIP
 
 commit;
 
+update rulvalue set rulidvalue=300762 where rulid=4009 and rulidvalue=1002;
+commit;
+
+==============
+
+Insert into RULE (RULID,RULCODE,RULTARGET,RULOPERATOR,RULLOWERLIMIT,RULUPPERLIMIT,RULSTATUS,CRIIDFIRST,RULIDFIRST,RULIDSECOND,CRIIDSECONDMAX,CRIIDSECONDMIN,RULTYPE,RULFLAGCASSIOPAE,RULGROUP) 
+values ('3007139','3007139','AVDOSS','IN',null,null,'ACTIVE','3',null,null,null,null,'LOGICAL',null,null);
+
+ 
+
+---- LANRULE
+Insert into LANRULE (RULID,LANCODE,RULLABEL) values ('3007139','FR','Rule Notification cbi');
+
+ 
+
+----- RULVALUE
+
+ 
+
+Insert into RULVALUE (RULID,RVAORDRE,RVAVALUE,RULIDVALUE,CRIID) values ('3007139','1',null,'4011',null);
+Insert into RULVALUE (RULID,RVAORDRE,RVAVALUE,RULIDVALUE,CRIID) values ('3007139','2',null,'300760',null);
+
+ 
+
+ 
+
+update cddrul set rulid =3007139  where cddordre = 10145  and cseid =108 and rulid=4013  ;
+
+=====
+---rule pour habilitation DGA -DG
+
+ 
+
+Insert into RULE (RULID,RULCODE,RULTARGET,RULOPERATOR,RULLOWERLIMIT,RULUPPERLIMIT,RULSTATUS,CRIIDFIRST,RULIDFIRST,RULIDSECOND,CRIIDSECONDMAX,CRIIDSECONDMIN,RULTYPE,RULFLAGCASSIOPAE,RULGROUP) 
+values ('3007140','3007140','AVDOSS','IN',null,null,'ACTIVE','3',null,null,null,null,'LOGICAL',null,null);
+
+ 
+
+---- LANRULE
+Insert into LANRULE (RULID,LANCODE,RULLABEL) values ('3007140','FR','Rule DG DGA');
+
+ 
+
+----- RULVALUE
+
+ 
+
+Insert into RULVALUE (RULID,RVAORDRE,RVAVALUE,RULIDVALUE,CRIID) values ('3007140','1',null,'511',null);
+Insert into RULVALUE (RULID,RVAORDRE,RVAVALUE,RULIDVALUE,CRIID) values ('3007140','2',null,'512',null);
+
+ 
+
+ 
+
+update cddrul set rulid =3007140  where cddordre = 1028  and cseid =19 and rulid=511  ;
+
+====
+
+update wstjump set rulid =3007138 where worcode='WFCLIPRO' and wstorder=18 and wstorderdest=10 and rulid =4009 ;
+
+===
+update cddrul set rulid =3007139 where cddordre = 10185 and cseid =108 and rulid=4013 ;
+
 ===
 
 EXTSGMAFOT-191 :  
