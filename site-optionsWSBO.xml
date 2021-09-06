@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xsi:schemaLocation="            http://www.springframework.org/schema/beans            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd            http://www.springframework.org/schema/webflow-config            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <bean class="com.cassiopae.cassiopae.properties.BatchPropertiesBean" id="batchPropertiesBean">
+      <property name="workingDir" value="/Cassiopae/Clients/SGM40/apps/common/bin"></property>
+      <property name="outputFolder" value="/Cassiopae/Clients/SGM40/work/SGM40-BO/batch/output"></property>
+      <property name="tempFolder" value="/Cassiopae/Clients/SGM40/work/SGM40-BO/batch/temp"></property>
+      <property name="environmentVariables">
+         <list>
+            <value>TEMP_PATH=/Cassiopae/Clients/SGM40/work/SGM40-BO/batch/temp</value>
+            <value>NLS_LANG=.UTF8</value>
+            <value>LANG=sr_RS@UTF8</value>
+            <value>ORACLE_HOME=/Cassiopae/Tools/instantclient_10_2_VSGM</value>
+			<value>TNS_ADMIN=/Cassiopae/Tools/instantclient_10_2_VSGM</value>
+            <value>PATH=$PATH:/Cassiopae/Clients/SGM40/apps/common/bin:/Cassiopae/Tools/instantclient_10_2_VSGM</value>
+            <value>LD_LIBRARY_PATH=/Cassiopae/Clients/SGM40/apps/common/bin:/Cassiopae/Tools/instantclient_10_2_VSGM</value>
+         </list>
+      </property>
+      <property name="schemaDetails">
+         <map>
+            <entry>
+               <key>
+                  <value>TRSGM40</value>
+               </key>
+               <bean class="com.cassiopae.cassiopae.properties.DataSource">
+                  <property name="dbName" value="SGM40"></property>
+                  <property name="schema" value="TRSGM40"></property>
+                  <property name="encryptedPassword" value="TRES5PRG"></property>
+               </bean>
+            </entry>
+         </map>
+      </property>
+   </bean>
+   <bean class="com.cassiopae.cassiopae.properties.Doc1PropertiesBean" id="doc1PropertiesBean">
+      <property name="doc1WorkingDir" value="/Cassiopae/Clients/SGM40/DOC1-Version6-64bits/Generate/lnx64"></property>
+      <property name="urepertoirein" value="/Cassiopae/Clients/SGM40/work/SGM40-BO/batch/temp"></property>
+      <property name="ufileattente" value="localhost:9012"></property>
+      <property name="delaipdf" value="5"></property>
+      <property name="outputFileExt" value="PDF"></property>
+   </bean>
+   <bean class="java.lang.Boolean" id="hostedInJavaSE">
+      <constructor-arg>
+         <value>false</value>
+      </constructor-arg>
+   </bean>
+   <bean class="java.net.URL" id="webServiceEndPointURL">
+      <constructor-arg>
+         <value>http</value>
+      </constructor-arg>
+      <constructor-arg>
+         <value>localhost</value>
+      </constructor-arg>
+      <constructor-arg>
+         <value>7002</value>
+      </constructor-arg>
+      <constructor-arg>
+         <value>/CassiopaeWebServicesSGM40-BO/CassiopaeServiceSoapHttpPort</value>
+      </constructor-arg>
+   </bean>
+   <!-- If WEBSERVICEENDPOINT_PROTOCOL is specified as "https" then SSL configuration needs to be done by
+		uncommenting the properties commented below and setting appropriate values for them.
+	-->
+
+   <bean class="com.cassiopae.cassiopae.properties.runtime.SSLConfiguration" id="casWSsslConfiguration">
+      <!--
+	&lt;property name="certificateStoreFile" value="%WS_SSLCONFIG_CERT_STORE_FILE%" /&gt;
+	&lt;property name="certificateStorePassword" value="%WS_SSLCONFIG_CERT_STORE_PASSWORD%"/&gt;
+	&lt;property name="trustedCertStoreFile" value="%WS_SSLCONFIG_TRUST_STORE_FILE%" /&gt;
+	&lt;property name="trustedCertStorePassword" value="%WS_SSLCONFIG_TRUST_STORE_PASSWORD%"/&gt;
+	&lt;property name="keyManagerFactoryPassword" value="%WS_SSLCONFIG_KEY_MGR_FACTORY_PASSWORD%"/&gt;
+ -->
+</bean>
+   <bean class="com.cassiopae.cassiopae.properties.KSLConfiguration" id="kSLConfiguration" lazy-init="true"></bean>
+</beans>
+
