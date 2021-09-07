@@ -1,0 +1,350 @@
+PROCEDURE P_EVENGA2 (
+   nDosId               IN DOSSIER.DOSID%TYPE,
+   nActId               IN DOSSIER.ACTID%TYPE,
+   nCreId	       	IN OUT NUMBER,
+   dtEffet              IN DATE,
+   nSigne               IN NUMBER,
+   nEngQp               IN NUMBER,
+   bReal                IN NUMBER,
+   nDosChaId1           IN OUT NUMBER,
+   nDosChaId2           IN OUT NUMBER,
+   nDosChaId3           IN OUT NUMBER,
+   nDosChaId4           IN OUT NUMBER,
+   nImaId               IN NUMBER,
+   nReturnCode		IN OUT NUMBER) AS
+BEGIN
+   DECLARE
+         rtDossier DOSSIER%ROWTYPE;
+         sTmfFonction CREVT.TMFFONCTION%TYPE;
+         nItrId       LKDOSRUBITRRUB.ITRID%TYPE;
+         sUti         CREVT.UTICODECREAT%TYPE;
+         sDevCode     CREVT.DEVCODE%TYPE;
+         nBimId       DOSBIM.BIMID%TYPE;
+         nMaxOrdre    NUMBER;
+         sPhaCode     PHASE.PHACODE%TYPE;
+         nCountJalon  DOSPHASE.JALCODE%TYPE;
+         nOk          NUMBER;
+         nMax         NUMBER:=0;
+         nCphOrdre    CHAPHASE.CPHORDRE%TYPE;
+         nChaCount    NUMBER:=1;
+         nValeur      NUMBER;
+		 nGenNotif	  INTEGER := 0;
+		 nOption      NUMBER:=0;
+         nMaxCreId    CREVT.CREID%TYPE;
+		 sTpaTexte	  TOPPARAM.TPATEXTE%TYPE;
+		 nCoeff		  NUMBER;
+		 nCount		  INTEGER;
+		 nCreMt		  NUMBER;
+		 nOrigine	  NUMBER;
+         CURSOR C_ITR IS
+            SELECT DISTINCT ITRID
+            FROM   LKDOSRUBITRRUB
+            WHERE  DOSID = nDosId;
+
+         CURSOR C_LKCHADOS IS
+            SELECT DISTINCT CHAID
+            FROM   LKCHADOS
+            WHERE  DOSID = nDosId;
+   BEGIN
+      BEGIN
+
+         SELECT DEVCODE INTO sDevCode FROM DOSSIER WHERE DOSID = nDosId;
+         SELECT COUNT(*) INTO nCountJalon FROM DOSPHASE WHERE DOSID = nDosId AND JALCODE = 'MISENPROD';
+
+         SELECT TMFFONCTION INTO sTmfFonction FROM CREVT WHERE CREID = nCreId;
+
+         PA_UPDATEDOSSIER.MT_PHASECOMMERCIALE( nDosId, dtEffet, nSigne );
+
+         nDosChaId1 := NULL;
+         nDosChaId2 := NULL;
+         nDosChaId3 := NULL;
+         nDosChaId4 := NULL;
+
+         SELECT *
+         INTO   rtDossier
+         FROM   DOSSIER
+         WHERE  DOSID = nDosId;
+         SELECT UTICODECREAT INTO sUti FROM CREVT WHERE  CREID = nCreId;
+         -- si passage en phase EC
+         IF bReal = 1 THEN
+
+            -- enregitrement de la date de signature du dossier
+            UPDATE DOSSIER
+            SET DOSDTSIGNE = NVL(DOSDTSIGNE,dtEffet), DOSMTSIGN = nSigne
+            WHERE DOSID = nDosId;
+
+            -- on gere eventuellement le ou les chantier(s)
+            IF ( rtDossier.TACCODE NOT IN ( 'PRET', 'EMPRUNT' ) AND rtDossier.DOSTYPEFINANCEMENT IN ( 'TCONS', 'CONST' ) )
+                 OR
+               ( rtDossier.DOSTYPEFINANCEMENT = 'ACHAT' AND rtDossier.TACCODE IN ( 'CBI', 'CBMIXTE', 'CBM', 'LOCFIN' ) ) THEN
+               FOR C_ITR_REC IN C_ITR LOOP
+
+                   BEGIN
+                      nItrId := C_ITR_REC.ITRID;
+                      PA_UPDATEDOSSIER3.P_MAJPHASECHANTIER(nItrId,
+                                     dtEffet,
+                                     rtDossier.DOSDTEFFET,
+                                     sUti,
+                                     nCreId,
+                                     nDosChaId1,
+                                     nDosChaId2,
+                                     nDosChaId3,
+                                     nDosChaId4,
+                                     nReturnCode);
+                   END;
+               END LOOP;
+            ELSIF rtDossier.TACCODE = 'PRET' AND rtDossier.DOSTYPEFINANCEMENT IN ('PRETCHT', 'PRETCHA','PRETIMM') THEN
+
+               nOk := 0;
+               FOR C_LKCHADOS_REC IN C_LKCHADOS LOOP
+                  BEGIN
+                     -- Mise a jour des phases des chantiers liees au dossier
+                     SELECT   PHACODE, CPHORDRE
+                     INTO     sPhaCode, nCphOrdre
+                     FROM     CHAPHASE
+                     WHERE    CHAID = C_LKCHADOS_REC.CHAID
+                     AND      CPHDTFIN IS NULL;
+                     nOk := 1;
+                     IF sPhaCode = 'INI' THEN
+                        SELECT MAX(CPHORDRE)
+                        INTO   nMax
+                        FROM   CHAPHASE
+                        WHERE  CHAID = C_LKCHADOS_REC.CHAID;
+
+                        PA_UPDATECHANTIER.I_CHAPHASE (
+                           C_LKCHADOS_REC.CHAID,
+                           nMax+1,
+                           'ACTIVE',
+                           'CHAN',
+                           sUti,
+                           TRUNC(dtEffet) ,
+                           'EC',
+                           NULL,
+                           nCreId,
+                           nReturnCode);
+
+                        IF nReturnCode != 0 THEN
+                           EXIT;
+                        END if;
+
+                        UPDATE   CHAPHASE
+                        SET      CPHDTFIN = TRUNC( dtEffet - 1 )
+                        WHERE    CHAID    = C_LKCHADOS_REC.CHAID
+                        AND      PHACODE  = 'INI'
+                        AND      CPHORDRE = nCphOrdre;
+                        IF rtDossier.DOSDTEFFET IS NOT NULL THEN
+                           UPDATE CHANTIER
+                           SET    CHADTFINPREV = TRUNC( rtDossier.DOSDTEFFET),
+                                  CHADTMAJ     = TRUNC( SYSDATE ),
+                                  UTICODE      = sUti
+                           WHERE  CHAID = C_LKCHADOS_REC.CHAID;
+                        END IF;
+                     END if;
+                  EXCEPTION WHEN OTHERS THEN
+                     NULL;
+                  END;
+                  PA_UPDATECHANTIER.P_EVT_PHASEACTIVE(
+                     C_LKCHADOS_REC.CHAID,
+                     dtEffet,
+                     nCreId,
+                     nReturnCode);
+                  -- Pour controle du chantier
+                  IF nChaCount = 1 THEN
+                     nDosChaId1 := C_LKCHADOS_REC.CHAID;
+                  ELSIF nChaCount = 2 THEN
+                     nDosChaId2 := C_LKCHADOS_REC.CHAID;
+                  ELSIF nChaCount = 3 THEN
+                     nDosChaId3 := C_LKCHADOS_REC.CHAID;
+                  ELSIF nChaCount = 4 THEN
+                     nDosChaId4 := C_LKCHADOS_REC.CHAID;
+                  END IF;
+                  nChaCount := nChaCount + 1;
+
+               END LOOP;
+
+               if nOk = 0 THEN
+                  --recherche si bien, tranche, chantier
+                  BEGIN
+                     SELECT BIMID
+                     INTO   nBimId
+                     FROM   DOSBIM
+                     WHERE  DOSID = nDosId;
+                 EXCEPTION
+                     WHEN OTHERS THEN
+                        nBimId := NULL;
+                 END;
+                 IF nBimId IS NOT NULL THEN
+                     SELECT PHACODE INTO sPhaCode
+                     FROM BIMPHASE
+                     WHERE BIMID = nBimId
+                     AND BPHDTFIN IS NULL;
+                     IF sPhaCode='INI' THEN
+                          UPDATE BIMPHASE
+                          SET BPHDTFIN = TRUNC( dtEffet - 1 )
+                          WHERE BIMID = nBimId
+                          AND PHACODE='INI'
+                          AND BPHDTFIN IS NULL;
+                          SELECT MAX(BPHORDRE)
+                          INTO   nMaxOrdre
+                          FROM   BIMPHASE
+                          WHERE  BIMID = nBimId;
+                          INSERT INTO BIMPHASE
+                                     ( BPHORDRE,
+                                       BIMID,
+                                       PHACODE,
+                                       PHADEST,
+                                       UTICODE,
+                                       BPHDTEFFET,
+                                       CREID )
+                          VALUES (      nMaxOrdre+1,
+                                       nBimId,
+                                      'ACTIVE',
+                                      'BIEN',
+                                       sUti,
+                                       dtEffet,
+                                       nCreId  ) ;
+                     END IF;
+                     BEGIN
+                        SELECT MIN(ITRID) INTO nItrId
+                        FROM   LKITRBIM WHERE BIMID = nBimId;
+                     EXCEPTION
+                        WHEN OTHERS THEN
+                           nItrId := NULL;
+                     END;
+                     IF nItrId IS NOT NULL THEN
+                        SELECT PHACODE INTO sPhaCode
+                        FROM ITRPHASE
+                        WHERE IPHDTFIN IS NULL
+                        AND ITRID = nItrId;
+                        IF sPhaCode='INI' THEN
+                              UPDATE ITRPHASE
+                              SET IPHDTFIN = TRUNC( dtEffet - 1 )
+                              WHERE ITRID = nItrId
+                              AND PHACODE='INI'
+                              AND IPHDTFIN IS NULL;
+                              INSERT INTO ITRPHASE (ITRID,
+                                           PHACODE,
+                                           PHADEST,
+                                           UTICODE,
+                                           IPHDTEFFET,
+                                           CREID )
+                              VALUES               (nItrId,
+                                          'ACTIVE',
+                                          'TRANCHE',
+                                           sUti,
+                                           dtEffet,
+                                           nCreId ) ;
+                        END IF;
+                        PA_UPDATEDOSSIER3.P_MAJPHASECHANTIER(nItrId,
+                                        dtEffet,
+                                        rtDossier.DOSDTEFFET,
+                                        sUti,
+                                        nCreId,
+                                        nDosChaId1,
+                                        nDosChaId2,
+                                        nDosChaId3,
+                                        nDosChaId4,
+                                        nReturnCode);
+                     END IF;
+                  END if;
+              END IF;
+            END IF;
+
+         END IF;
+         if bReal != 1 THEN
+            UPDATE DOSSIER
+            SET DOSDTCOMITE = NVL(DOSDTCOMITE,dtEffet), DOSMTPRODUCT = NVL(DOSMTPRODUCT, nSigne)
+            WHERE DOSID = nDosId;
+         END if;
+
+         IF rtDossier.DosTypeFinancement IS NOT NULL THEN
+      		nOption := F_IsOptionSiteTexte('EVENT','CROENGAGE',sgUgeCode,rtDossier.DosTypeFinancement);
+      	 END IF;
+
+        IF rtDossier.DOSTYPEFINANCEMENT NOT IN ( 'TTNL', 'TTLS', 'CLIP' ) THEN
+			IF sTmfFonction = 'EVD_ENGM' THEN
+          PA_GENERECRO.I_CRO( nActId, nCreId, NULL, NULL, NULL, 'ENGAGE', dtEffet, nReturnCode );
+				END IF;
+
+            IF bReal = 1 THEN
+
+				IF F_PLCROENGAGETOGEN(nDosId) = 0 AND F_PLISENAGENEEDED(nDosId) = 1 THEN
+					PA_GENERECRO.I_CRO( nActId, nCreId, NULL, NULL, NULL, 'ENGAGE', dtEffet, nReturnCode );
+				END IF;
+			ELSE
+				PA_COMMON.S_TPALOGIQUE( 'DOSSIER', 'NOTIFICATION', nGenNotif );
+				nGenNotif := NVL(nGenNotif,0);
+
+				IF nGenNotif = 1 THEN
+					PA_GENERECRO.I_CRO( nActId, nCreId, NULL, NULL, NULL, 'NOTIF', dtEffet, nReturnCode );
+				END IF;
+			END IF;
+        END IF;
+
+
+         --mca112007 UTILISE CREDATA ET TSGCODE LTVCACLC
+         /*IF bReal != 1 AND rtDossier.TACCODE = 'PRET'  THEN
+                  --recherche si bien, tranche, chantier
+                  BEGIN
+                     SELECT BIMID
+                     INTO   nBimId
+                     FROM   DOSBIM
+                     WHERE  DOSID = nDosId;
+                 EXCEPTION
+                     WHEN OTHERS THEN
+                        nBimId := NULL;
+                 END;
+
+                 IF nBimId IS NOT NULL THEN
+                     BEGIN
+                        PA_UPDATEDOSSIER.P_GETSTATVALPRET (nDosId,nBimId,NULL,nValeur);
+                     EXCEPTION
+                        WHEN OTHERS THEN
+                           nReturnCode := -1 * SQLCODE;
+                     END;
+                  END if;
+         END IF;
+*/
+         SELECT UTICODECREAT INTO sUti FROM CREVT WHERE  CREID = nCreId;
+         PA_UPDATEDOSSIER.U_ACTIVEPHASEBIEN( nDosId, nCreId, sUti, dtEffet, nReturnCode );
+
+		 nCoeff := 1;
+		 nCreMt := nEngQp;
+		 PA_COMMON.S_TPATEXTE ( 'DOSSIER', 'HPTPGCODE', sTpaTexte );
+		 IF sTpaTexte IS NOT NULL AND INSTR(sTpaTexte, rtDossier.TPGCODE ) > 0 THEN
+
+			SELECT COUNT(1)
+			  INTO nCount
+			  FROM DOSRUBRIQUE
+			 WHERE DOSID = nDosId
+			   AND F_ISRUBIDONFILTRE(RUBID, 'VATCOFI') = 1;
+
+			IF nCount > 0 THEN
+				SELECT SUM(DRUMTORIGINE)
+				  INTO nOrigine
+				  FROM DOSRUBRIQUE
+				 WHERE DOSID = nDosId
+				   AND F_ISRUBIDONFILTRE(RUBID, 'VATCOFI') = 1;
+				--nCoeff := nCoeff + NVL(F_getTauxTaxe('VATDE'),0);
+				nCreMt := nCreMt + NVL(nOrigine, 0);
+			END IF;
+		 END IF;
+
+         UPDATE CREVT
+         SET    CREMT = ROUND( nCreMt * nCoeff, f_NbDecimalDansDevise(sDevCode)), DEVCODE = sDevCode, IMAID = nImaId
+         WHERE  CREID = nCreId;
+         IF nReturnCode = 0 AND nImaId IS NULL THEN
+            PA_EVT.U_EVT_VALIDE( nCreId, nReturnCode);
+         END IF;
+      EXCEPTION
+         WHEN ERR_PARENT_NOT_FOUND THEN
+            nReturnCode := ERR_PARENT_NOT_FOUND_CONST;
+	   WHEN ERR_I_NULL_MANDATORY_KEY THEN
+         	nReturnCode := ERR_NULL_MANDATORY_KEY_CONST;
+         WHEN DUP_VAL_ON_INDEX THEN
+            nReturnCode := ERR_DUP_VAL_ON_INDEX_CONST ;
+         WHEN OTHERS THEN
+            nReturnCode := -1 * SQLCODE;
+      END;
+   END;
+END P_EVENGA2;
