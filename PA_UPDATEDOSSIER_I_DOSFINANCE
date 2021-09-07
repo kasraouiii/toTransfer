@@ -1,0 +1,134 @@
+PROCEDURE I_DOSFINANCE (nDosId DOSFINANCE.DOSID%TYPE, nDfiOrdre DOSFINANCE.DFIORDRE%TYPE,
+                        dtDfiDtFinance DOSFINANCE.DFIDTFINANCE%TYPE, nDfiMtEvt DOSFINANCE.DFIMTEVT%TYPE,
+                        nDfiMtTotal DOSFINANCE.DFIMTTOTAL%TYPE,
+                        nDfiMtVr DOSFINANCE.DFIMTVR%TYPE, nDfiMtCBIFrais DOSFINANCE.DFIMTCBIFRAIS%TYPE,
+                        nDfiMtCBIAmorti DOSFINANCE.DFIMTCBIAMORTI%TYPE, nDfiMtCBINonAmorti DOSFINANCE.DFIMTCBINONAMORTI%TYPE,
+                        nDfiFlagIndexVr DOSFINANCE.DFIFLAGINDEXVR%TYPE, nDfiPctVr DOSFINANCE.DFIPCTVR%TYPE,
+                        sTevCode TMOFONCTION.TMFFONCTION%TYPE,
+                        sMyUser UTILISATEUR.UTICODE%TYPE,
+                        sTacCode TACTIVITE.TACCODE%TYPE,
+                        nCreId CREVT.CREID%TYPE,
+                        nReturnCode IN OUT NUMBER)
+AS
+BEGIN
+  DECLARE
+    nMYCreId NUMBER;
+    sTmfFonction  CREVT.TMFFONCTION%TYPE;
+	 nCount        NUMBER;
+    nPooId 			POOL.POOID%TYPE;
+    nMaxDfiOrdre  DOSFINANCE.DFIORDRE%TYPE;
+    bRefreshPool  BOOLEAN;
+  BEGIN
+    IF sTevCode IS NOT NULL AND nCreId IS NULL THEN
+       SELECT SEQ_CREID.NEXTVAL INTO nMYCreId FROM DUAL;
+       INSERT INTO CREVT
+	(	CREID,
+		TEVDEST,
+		TMOMODULE,
+		TMFFONCTION,
+		UTICODECREAT,
+		CREDTCREAT,
+		DOSID,
+		CREDTEFFET,
+		TACCODE,
+        	CREDTVALID,
+		UTICODEVALID
+	)
+	VALUES
+	(
+		nMYCreId,
+		'DOSSIER',
+		'DOSSIER',
+		sTevCode,
+		sMyUser,
+		TRUNC(SYSDATE),
+		nDosId,
+		dtDfiDtFinance,
+		sTacCode,
+	        dtDfiDtFinance,
+		sMyUser
+       	);
+    ELSE
+       nMYCreId := nCreId;
+    END IF;
+
+    IF nMYCreId IS NOT NULL THEN
+    	SELECT TMFFONCTION INTO sTmfFonction FROM CREVT WHERE CREID = nMYCreId;
+    ELSE
+    	sTmfFonction := 'EVD_BIDON';
+    END IF;
+
+    IF sTmfFonction = 'EVD_POOL' THEN
+    	bRefreshPool := TRUE;
+    ELSE
+    	SELECT COUNT(1) INTO nCount FROM DOSFINANCE WHERE DOSID = nDosId;
+    	IF nCount = 0 THEN
+    		bRefreshPool := TRUE;
+    	ELSE
+    		SELECT MAX(DFIORDRE) INTO nMaxDfiOrdre FROM DOSFINANCE WHERE DOSID = nDosId;
+    		BEGIN
+    			SELECT POOID INTO nPooId FROM DOSFINANCE WHERE DOSID = nDosId AND DFIORDRE = nMaxDfiOrdre;
+    		EXCEPTION WHEN OTHERS THEN
+    			nPooId := NULL;
+    		END;
+    		bRefreshPool := FALSE;
+    	END IF;
+    END IF;
+
+	IF bRefreshPool THEN
+		SELECT 	MAX(POOID)
+		INTO 		nPooId
+		FROM 		POOL
+		WHERE 	DOSID = nDosId
+		AND 		POOTYPE = 'FINANCE'
+		AND 		POODTFIN IS NULL;
+	END IF;
+
+    INSERT INTO DOSFINANCE
+	(
+        DOSID,
+        DFIORDRE,
+        DFIDTFINANCE,
+        DFIMTEVT,
+        DFIMTTOTAL,
+        DFIMTVR,
+        DFIMTCBIFRAIS,
+        DFIMTCBIAMORTI,
+        DFIMTCBINONAMORTI,
+        DFIFLAGINDEXVR,
+        DFIPCTVR,
+        CREID,
+        POOID
+	)
+    VALUES
+	(
+	nDosId,
+	nDfiOrdre,
+	dtDfiDtFinance,
+	nDfiMtEvt,
+        nDfiMtTotal,
+        nDfiMtVr,
+        nDfiMtCBIFrais,
+        nDfiMtCBIAmorti,
+        nDfiMtCBINonAmorti,
+        nDfiFlagIndexVr,
+        nDfiPctVr,
+        nMYCreId,
+        nPooId
+	);
+
+    nReturnCode := 0;
+    IF SQL%ROWCOUNT = 0 THEN
+      nReturnCode := ERR_NO_ROWS_CONST;
+    END IF;
+    EXCEPTION
+      WHEN ERR_PARENT_NOT_FOUND THEN
+            nReturnCode := EP_DOSFINANCE_NF;
+	WHEN ERR_I_NULL_MANDATORY_KEY THEN
+            nReturnCode := EN_DOSFINANCE_M_KEY_CONST;
+      WHEN DUP_VAL_ON_INDEX THEN
+            nReturnCode := ERR_DUP_DOSFINANCE_V;
+      WHEN OTHERS THEN
+            nReturnCode := -1 * SQLCODE;
+    END;
+END I_DOSFINANCE;
