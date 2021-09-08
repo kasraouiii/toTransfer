@@ -1,0 +1,43 @@
+Session :  hzemmorui/azerty12345*
+
+
+Bases de données : 
+
+SID ===> username/password : hostname
+
+SGM45HF ==> AVSGM45HF/prospect : 10.173.182.183
+
+SGM45HF ==> TRSGM45HF/TRES5PRG : 10.173.182.183
+
+SGM45DEV ==> AVSGM45DEV/prospect : 10.173.182.54
+
+SGM45DEV ==> TRSGM45DEV/TRES5PRG : 10.173.182.54
+
+SGM45HF ==> TRSGM40HF/TRES5PRG : 10.173.182.183 (4.0)
+
+SGM45DEV ==> TRSGM40DEV/TRES5PRG : 10.173.182.54 (4.0)
+
+====================
+
+Serveurs d'application :
+
+DEV 4.5 : 10.173.182.53 cassiopae/cassiopae
+
+HF 4.5 : 10.173.182.182 cassiopae/C@ssiopae2019
+
+HF 4.0 : 10.173.182.171 cassiopae/C@ssiopae2019
+
+===================
+
+Serveurs de base de données : 
+
+BD DEV 4.5 : 10.173.182.54 oracle/oracle
+BD HF 4.5 : 10.173.182.183 oracle/oracle
+BD HF 4.0 : 10.173.182.183 oracle/oracle
+
+
+
+
+Exemples des utilisateurs Cassiopae : (username==password) : COMSGL,CASGL,RISQ,RMCP...
+
+
