@@ -1,0 +1,504 @@
+
+PROCEDURE I_ACTEUR
+    (
+        NNEWACTID IN OUT ACTEUR.ACTID%TYPE,
+        SUGECODE ACTEUR.UGECODE%TYPE,
+        SUTICODECREAT ACTEUR.UTICODECREAT%TYPE,
+        DTACTDTCREAT ACTEUR.ACTDTCREAT%TYPE,
+        SACTCODE IN OUT ACTEUR.ACTCODE%TYPE,
+        SCJUCODE ACTEUR.CJUCODE%TYPE,
+        SPAYCODECATJURIDIQUE ACTEUR.PAYCODECATJURIDIQUE%TYPE,
+        SUTICODEMAJ ACTEUR.UTICODEMAJ%TYPE,
+        SACTLIBCOURT ACTEUR.ACTLIBCOURT%TYPE,
+        SACTNOM ACTEUR.ACTNOM%TYPE,
+        SACTNOM2 ACTEUR.ACTNOM2%TYPE,
+        SACTSIRET ACTEUR.ACTSIRET%TYPE,
+        DTACTDTMAJ ACTEUR.ACTDTMAJ%TYPE,
+        SPAYCODE ACTEUR.PAYCODE%TYPE,
+        SLANCODE ACTEUR.LANCODE%TYPE,
+        SAGEEMETTEUR ACTEURGESTION.AGEEMETTEUR%TYPE,
+        NFLAGSOCIETE NUMBER,
+        NACTFLAGTAXPROF ACTEUR.ACTFLAGTAXPROF%TYPE,
+        NACTCAPITAL ACTEUR.ACTCAPITAL%TYPE,
+        NACTFINMOISFISC ACTEUR.ACTFINMOISFISC%TYPE,
+        SACTNUMRCM ACTEUR.ACTNUMRCM%TYPE,
+        SNAFCODE ACTEUR.NAFCODE%TYPE,
+        SPAYCODENAF ACTEUR.PAYCODENAF%TYPE,
+        SACTTVACE ACTEUR.ACTTVACE%TYPE,
+        SACTCODERCM ACTEUR.ACTCODERCM%TYPE,
+        SACTMEMO ACTEUR.ACTMEMO%TYPE,
+        DTAPADTNAISS ACTEURPARTICULIER.APADTNAISS%TYPE,
+        SAPADEPTNAISS ACTEURPARTICULIER.APADEPTNAISS%TYPE,
+        SAPACOMNAISS ACTEURPARTICULIER.APACOMNAISS%TYPE,
+        NAPANBENFANT ACTEURPARTICULIER.APANBENFANT%TYPE,
+        NAPASEXE ACTEURPARTICULIER.APASEXE%TYPE,
+        SAPAPAYCODE ACTEURPARTICULIER.PAYCODE%TYPE,
+        SAPAEMPLOYEUR ACTEURPARTICULIER.APAEMPLOYEUR%TYPE,
+        SAPASITFAM ACTEURPARTICULIER.APASITFAM%TYPE,
+        NAPAFLAGPROPRIETE ACTEURPARTICULIER.APAFLAGPROPRIETE%TYPE,
+        SAPATITRE ACTEURPARTICULIER.APATITRE%TYPE,
+        SAPANOMMARITAL ACTEURPARTICULIER.APANOMMARITAL%TYPE,
+        SAPAREGIMEMATRIM ACTEURPARTICULIER.APAREGIMEMATRIM%TYPE,
+        SAGECIB ACTEURGESTION.AGECIB%TYPE,
+        SAGELOGO ACTEURGESTION.AGELOGO%TYPE,
+        NAGEDELAIEXIGIBLE ACTEURGESTION.AGEDELAIEXIGIBLE%TYPE,
+        SDEVCODE ACTEUR.DEVCODE%TYPE,
+        STDRCODEEFFET ACTEURGESTION.TDRCODEEFFET%TYPE,
+        STDRCODEPRL ACTEURGESTION.TDRCODEPRL%TYPE,
+        STDRCODEPRLACCELERE ACTEURGESTION.TDRCODEPRLACCELERE%TYPE,
+        STDRCODEVIR ACTEURGESTION.TDRCODEVIR%TYPE,
+        SAGESEPAIDENTIFIER ACTEURGESTION.AGESEPAIDENTIFIER%TYPE,
+        NAINNBPARTTOTAL ACTEURINDIVISION.AINNBPARTTOTAL%TYPE,
+        SAGEEMETVIR ACTEURGESTION.AGEEMETVIR%TYPE,
+        SACTLIBCHEQUE ACTEUR.ACTLIBCHEQUE%TYPE,
+        NTCIID ACTEURGESTION.TCIID%TYPE,
+        BAGEFLAGIRFACTURE ACTEURGESTION.AGEFLAGIRFACTURE%TYPE,
+        BAGEFLAGIRCHQ ACTEURGESTION.AGEFLAGIRCHQ%TYPE,
+        NAGEMTFACMINI ACTEURGESTION.AGEMTFACMINI%TYPE,
+        NRUBID ACTEURGESTION.RUBID%TYPE,
+        STAXCODE ACTEURGESTION.TAXCODE%TYPE,
+        SACTREGIMETVA ACTEUR.ACTREGIMETVA%TYPE,
+        NACTFLAGAGREMENT ACTEUR.ACTFLAGAGREMENT%TYPE,
+        SACTRATTACHEMENT ACTEUR.ACTRATTACHEMENT%TYPE,
+        DTACTDTIMMATRICULATION ACTEUR.ACTDTIMMATRICULATION%TYPE, -- CV-03122001 DMF-64
+        NACTEFFECTIF ACTEUR.ACTEFFECTIF%TYPE, -- CV-27022003 FSA-11420
+        SAPANOMPATONYME ACTEURPARTICULIER.APANOMPATRONYMIQUE%TYPE,
+        SAPAPRENOM ACTEURPARTICULIER.APAPRENOM%TYPE,
+        SAPAMIDDLENAME ACTEURPARTICULIER.APAMIDDLENAME%TYPE,
+        SAPACHREGIMEMATRIM ACTEURPARTICULIER.APACHGREGIMEMATRIM%TYPE,
+        SAPACODENIVEAUETUDE ACTEURPARTICULIER.APACODENIVEAUETUDE%TYPE,
+        SAPADIRFONCTION ACTEURPARTICULIER.APADIRFONCTION%TYPE,
+        NAPAFLAGDIRIGEANT ACTEURPARTICULIER.APAFLAGDIRIGEANT%TYPE,
+        NAPAFLAGHOMMECLE ACTEURPARTICULIER.APAFLAGHOMMECLE%TYPE,
+        NAPAFLAGINTERDITBANCAIRE ACTEURPARTICULIER.APAFLAGINTERDITBANCAIRE%TYPE,
+        NAPAFLAGSUCCESSIONPRET ACTEURPARTICULIER.APAFLAGSUCCESSIONPRET%TYPE,
+        NAPAPCTCAPITAL ACTEURPARTICULIER.APAPCTCAPITAL%TYPE,
+        NAPAANEXPACTIVITE ACTEURPARTICULIER.APAANEXPERACTIVITE%TYPE,
+        NAPAEXPERIENCEFONCTION ACTEURPARTICULIER.APAANEXPERIENCEFONCTION%TYPE,
+        NACTFLAGNONDECLASSABLE ACTEUR.ACTFLAGNONDECLASSABLE%TYPE, -- CV-18082004 FSA-16070 NL
+        SDOMCODE ACTEUR.DOMCODE%TYPE,
+        DTAPADTPERMISDECONDUIRE ACTEURPARTICULIER.APADTPERMISDECONDUIRE%TYPE, -- CV-20062005 FSA-20165 Modif de base
+        NACTFLAGGROUPE ACTEUR.ACTFLAGGROUPE%TYPE,
+        SAGEFICP ACTEURGESTION.AGEFICP%TYPE,
+        SAGRCOMPOUNDINGMCODE ACTEURGROUPE.AGRCOMPOUNDINGMCODE%TYPE,
+        SAGRCOMPOUNDUSE ACTEURGROUPE.AGRCOMPOUNDUSE%TYPE,
+        SAGREXTERNALREF ACTEURGROUPE.AGREXTERNALREF%TYPE,
+        SAGRBADDEBTSTATUS ACTEURGROUPE.AGRBADDEBTSTATUS%TYPE,
+        SAGRLIBCOURT ACTEURGROUPE.AGRLIBCOURT%TYPE,
+        SAPAVILLENAISS ACTEURPARTICULIER.APAVILLENAISS%TYPE,
+        DTACTDTDEBNAF ACTEUR.ACTDTDEBNAF%TYPE,
+        NCALID ACTEURGESTION.CALID%TYPE,
+        SACTTAXREGIME ACTEURGESTION.ACTTAXREGIME%TYPE,
+        NAGEIRMARGIN ACTEURGESTION.AGEIRMARGIN%TYPE,
+        SACTCHANNEL ACTEUR.ACTCHANNEL%TYPE,
+        SACTCHANNELCODE ACTEUR.ACTCHANNELCODE%TYPE,
+        SACTTYPE ACTEUR.ACTTYPE%TYPE,
+        SACTEXTDEPARTMENT ACTEUR.ACTEXTDEPARTMENT%TYPE,
+        DACTDTEXTHIRING ACTEUR.ACTDTEXTHIRING%TYPE,
+        SACTRESIDENTCODE ACTEUR.ACTRESIDENTCODE%TYPE,
+        SAPACALBIRTHDAY ACTEURPARTICULIER.APACALBIRTHDAY%TYPE,
+        SACTSECTGESTION ACTSECTGESTION.ACTSECTGESTION%TYPE,
+        SACTREPRESENTATIVE ACTEUR.ACTREPRESENTATIVE%TYPE,
+        SACTREPRESENTNAME ACTEUR.ACTREPRESENTNAME%TYPE,
+        SACTCORPORATE ACTEUR.ACTCORPORATE%TYPE,
+        NACTFLAGGUARANTOR ACTEUR.ACTFLAGGUARANTOR%TYPE,
+        SACTQUALIFCLASS ACTEUR.ACTQUALIFCLASS%TYPE,
+		SACTEIN ACTEUR.ACTEIN%TYPE,
+		SACTCARDTRANSACTION ACTEUR.ACTCARDTRANSACTION%TYPE,
+		SACTCARDMANAGEMENT ACTEUR.ACTCARDMANAGEMENT%TYPE,
+		SACTBRANDTYPE ACTEUR.ACTBRANDTYPE%TYPE,
+        SACTETAT ACTEUR.ACTETAT%TYPE,
+		NACTFLAGPROSPECT ACTEUR.ACTFLAGPROSPECT%TYPE,
+		SAPAPANCARD ACTEURPARTICULIER.APAPANCARD%TYPE,
+        SAPAPASSPORT ACTEURPARTICULIER.APAPASSPORT%TYPE,
+        SAPAVOTERID ACTEURPARTICULIER.APAVOTERID%TYPE,
+        SAPADRIVINGLICENSE ACTEURPARTICULIER.APADRIVINGLICENSE%TYPE,
+		SACTTAXSYSTEM ACTEUR.ACTTAXSYSTEM%TYPE,
+		SAPANATIONALITY ACTEURPARTICULIER.APANATIONALITY%TYPE,
+		SACTIDSERVICING ACTEUR.ACTIDSERVICING%TYPE,
+        NRETURNCODE IN OUT NUMBER
+    )
+AS
+BEGIN
+    DECLARE
+        STEVDEST TEVENEMENT.TEVDEST%TYPE         := 'ACTEUR';
+        STMOMODULE TEVENEMENT.TMOMODULE%TYPE     := 'ACTEUR';
+        STMFFONCTION TEVENEMENT.TMFFONCTION%TYPE := 'EVACT_NEW';
+        NCREID  NUMBER;
+        DTEFFET DATE                    := SYSDATE;
+        STACCODE TACTIVITE.TACCODE%TYPE := 'GLOBAL';
+        NSYNCHRO NUMBER                 := 1;
+        SCJUTYPE CATJURIDIQUE.CJUTYPE%TYPE;
+        NTEMP1          NUMBER;
+        NUPDATECOMPTEUR NUMBER := - 1;
+		nTpalogique TOPPARAM.TPALOGIQUE%TYPE;
+		SACTTAXSYSTEMCHECK ACTEUR.ACTTAXSYSTEM%TYPE;
+    BEGIN
+  --ISF START Verification qu on est bien dans VW et la regle de regime fiscal
+        PA_COMMON.S_TPALOGIQUE( 'SEPA', 'ENDTOEND_VW_FR' ,nTpalogique );
+
+        SELECT SEQ_ACTID.NEXTVAL INTO NNEWACTID FROM DUAL;
+
+        IF SACTCODE IS NULL OR SACTCODE = 'KSIOP' THEN
+            P_GETPLCHRONO2('ACTEUR', 'GLOBAL', 'TOUT', 'ALL', NULL, 'ACTNUM', NULL, SYSDATE, NTEMP1, NTEMP1, NUPDATECOMPTEUR, SACTCODE, NULL, NULL, NULL, NNEWACTID, SUGECODE) ;
+        END IF;
+
+        IF (nTpalogique=1 AND SACTTAXSYSTEM IS NULL) THEN
+
+        BEGIN
+        SELECT  MAX(REVFILLECODE) INTO SACTTAXSYSTEMCHECK  FROM RELATIONVALEURPROFIL WHERE RECCODE ='CJUCODEREGFISC' AND REVMERECODE =SCJUCODE AND TPGCODE ='TOUT';
+
+			IF SACTTAXSYSTEMCHECK IS NULL THEN
+
+				SELECT DECODE (SACTTYPE,'PM','IS','PART','TS','BNC','BNC','BIC','BIC','BA','BA','ERROR_TYPEACT')
+					INTO SACTTAXSYSTEMCHECK
+							FROM DUAL;
+			END IF ;
+       EXCEPTION WHEN OTHERS
+       THEN SACTTAXSYSTEMCHECK:='ERROR_TYPEACT';
+        END ;
+        --ISF END Verification qu on est bien dans VW et la regle de regime fiscal
+
+        END IF ;
+        INSERT
+        INTO
+            ACTEUR
+            (
+                ACTID
+              , UGECODE
+              , UTICODECREAT
+              , ACTDTCREAT
+              , ACTCODE
+              , CJUCODE
+              , PAYCODECATJURIDIQUE
+              , UTICODEMAJ
+              , ACTLIBCOURT
+              , ACTNOM
+              , ACTNOM2
+              , ACTSIRET
+              , ACTDTMAJ
+              , PAYCODE
+              , LANCODE
+              , ACTFLAGTAXPROF
+              , ACTCAPITAL
+              , ACTFINMOISFISC
+              , ACTNUMRCM
+              , NAFCODE
+              , PAYCODENAF
+              , ACTTVACE
+              , ACTCODERCM
+              , ACTMEMO
+              , DEVCODE
+              , ACTLIBCHEQUE
+              , ACTREGIMETVA
+              , ACTFLAGAGREMENT
+              , ACTRATTACHEMENT
+              , ACTDTIMMATRICULATION
+              , -- CV-03122001 DMF-64
+                ACTEFFECTIF
+              , -- CV-27022003 FSA-11420
+                ACTFLAGNONDECLASSABLE
+              , -- CV-18082004 FSA-16070 NL
+                DOMCODE
+              , ACTFLAGGROUPE
+              , ACTCHANNEL
+              , ACTCHANNELCODE
+              , ACTTYPE
+              , ACTDTDEBNAF
+              , ACTEXTDEPARTMENT
+              , ACTDTEXTHIRING
+              , ACTRESIDENTCODE
+              , ACTREPRESENTATIVE
+              , ACTREPRESENTNAME
+              , ACTCORPORATE
+              , ACTFLAGGUARANTOR
+              , ACTQUALIFCLASS
+			  , ACTEIN
+			  , ACTCARDTRANSACTION
+			  , ACTCARDMANAGEMENT
+			  , ACTBRANDTYPE
+              , ACTETAT
+			  , ACTFLAGPROSPECT
+			  , ACTTAXSYSTEM
+			  , ACTIDSERVICING
+            )
+            VALUES
+            (
+                NNEWACTID
+              , SUGECODE
+              , SUTICODECREAT
+              , DTACTDTCREAT
+              , SACTCODE
+              , SCJUCODE
+              , DECODE(SPAYCODECATJURIDIQUE, NULL, SPAYCODE, SPAYCODECATJURIDIQUE)
+              , SUTICODEMAJ
+              , SACTLIBCOURT
+              , SACTNOM
+              , SACTNOM2
+              , SACTSIRET
+              , DTACTDTMAJ
+              , SPAYCODE
+              , SLANCODE
+              , NACTFLAGTAXPROF
+              , NACTCAPITAL
+              , NACTFINMOISFISC
+              , SACTNUMRCM
+              , SNAFCODE
+              , DECODE(SPAYCODENAF, NULL, SPAYCODE, SPAYCODENAF)
+              , SACTTVACE
+              , SACTCODERCM
+              , SACTMEMO
+              , SDEVCODE
+              , SACTLIBCHEQUE
+              , SACTREGIMETVA
+              , NACTFLAGAGREMENT
+              , SACTRATTACHEMENT
+              , DTACTDTIMMATRICULATION
+              , NACTEFFECTIF
+              , NACTFLAGNONDECLASSABLE
+              , SDOMCODE
+              , NACTFLAGGROUPE
+              , SACTCHANNEL
+              , SACTCHANNELCODE
+              , SACTTYPE
+              , DTACTDTDEBNAF
+              , SACTEXTDEPARTMENT
+              , DACTDTEXTHIRING
+              , SACTRESIDENTCODE
+              , SACTREPRESENTATIVE
+              , SACTREPRESENTNAME
+              , SACTCORPORATE
+              , NACTFLAGGUARANTOR
+              , SACTQUALIFCLASS
+			  , SACTEIN
+			  , SACTCARDTRANSACTION
+			  , SACTCARDMANAGEMENT
+			  , SACTBRANDTYPE
+              , SACTETAT
+			  , NACTFLAGPROSPECT
+			  , DECODE (SACTTAXSYSTEM,NULL,SACTTAXSYSTEMCHECK,SACTTAXSYSTEM)
+        ----ISF END Verification qu on est bien dans VW et la regle de regime fiscal
+            ,SACTIDSERVICING) ;
+        NRETURNCODE     := 0;
+        IF SQL%ROWCOUNT  = 0 THEN
+            NRETURNCODE := ERR_NO_ROWS_CONST;
+        END IF;
+        IF NRETURNCODE != ERR_NO_ROWS_CONST THEN
+            BEGIN
+                IF NFLAGSOCIETE = 1 THEN
+                    BEGIN
+                        INSERT
+                        INTO
+                            ACTEURGESTION
+                            (
+                                ACTID
+                              , AGEEMETTEUR
+                              , AGECIB
+                              , AGELOGO
+                              , AGEDELAIEXIGIBLE
+                              , TDRCODEEFFET
+                              , TDRCODEPRL
+                              , TDRCODEPRLACCELERE
+                              , TDRCODEVIR
+                              , AGEEMETVIR
+                              , TCIID
+                              , AGEFLAGIRFACTURE
+                              , AGEFLAGIRCHQ
+                              , AGEMTFACMINI
+                              , RUBID
+                              , TAXCODE
+                              , AGEFICP
+                              , CALID
+                              , ACTTAXREGIME
+                              , AGEIRMARGIN
+                              , AGESEPAIDENTIFIER
+                              , PAYCODE
+                            )
+                            VALUES
+                            (
+                                NNEWACTID
+                              , SAGEEMETTEUR
+                              , SAGECIB
+                              , SAGELOGO
+                              , NAGEDELAIEXIGIBLE
+                              , STDRCODEEFFET
+                              , STDRCODEPRL
+                              , STDRCODEPRLACCELERE
+                              , STDRCODEVIR
+                              , SAGEEMETVIR
+                              , NTCIID
+                              , BAGEFLAGIRFACTURE
+                              , BAGEFLAGIRCHQ
+                              , NAGEMTFACMINI
+                              , NRUBID
+                              , STAXCODE
+                              , SAGEFICP
+                              , NCALID
+                              , SACTTAXREGIME
+                              , NAGEIRMARGIN
+                              , SAGESEPAIDENTIFIER
+                              , SPAYCODE
+                            ) ;
+                        NRETURNCODE     := 0;
+                        IF SQL%ROWCOUNT  = 0 THEN
+                            NRETURNCODE := ERR_NO_ROWS_CONST;
+                        END IF;
+                    END;
+                END IF;
+                IF NACTFLAGGROUPE = 1 THEN
+                    BEGIN
+                        INSERT
+                        INTO
+                            ACTEURGROUPE
+                            (
+                                ACTID
+                              , AGRCOMPOUNDINGMCODE
+                              , AGRCOMPOUNDUSE
+                              , AGREXTERNALREF
+                              , AGRBADDEBTSTATUS
+                              , AGRLIBCOURT
+                            )
+                            VALUES
+                            (
+                                NNEWACTID
+                              , SAGRCOMPOUNDINGMCODE
+                              , SAGRCOMPOUNDUSE
+                              , SAGREXTERNALREF
+                              , SAGRBADDEBTSTATUS
+                              , SAGRLIBCOURT
+                            ) ;
+                        NRETURNCODE     := 0;
+                        IF SQL%ROWCOUNT  = 0 THEN
+                            NRETURNCODE := ERR_NO_ROWS_CONST;
+                        END IF;
+                    END;
+                END IF;
+                SELECT MAX(CJUTYPE) INTO SCJUTYPE FROM CATJURIDIQUE WHERE CJUCODE = SCJUCODE AND PAYCODE = NVL(SPAYCODECATJURIDIQUE, SPAYCODE) ;
+                IF SCJUTYPE IN('P', 'EI') OR SACTTYPE in ('PART', 'EI','BPART','HEADGRP') THEN
+                    BEGIN
+                        INSERT
+                        INTO
+                            ACTEURPARTICULIER
+                            (
+                                ACTID
+                              , APADTNAISS
+                              , APADEPTNAISS
+                              , APACOMNAISS
+                              , APANBENFANT
+                              , APASEXE
+                              , PAYCODE
+                              , APAEMPLOYEUR
+                              , APASITFAM
+                              , APAFLAGPROPRIETE
+                              , APATITRE
+                              , APANOMMARITAL
+                              , APAREGIMEMATRIM
+                              , APANOMPATRONYMIQUE
+                              , APAPRENOM
+                              , APAMIDDLENAME
+                              , APACHGREGIMEMATRIM
+                              , APACODENIVEAUETUDE
+                              , APADIRFONCTION
+                              , APAFLAGDIRIGEANT
+                              , APAFLAGHOMMECLE
+                              , APAFLAGINTERDITBANCAIRE
+                              , APAFLAGSUCCESSIONPRET
+                              , APAPCTCAPITAL
+                              , APAANEXPERACTIVITE
+                              , APAANEXPERIENCEFONCTION
+                              , APADTPERMISDECONDUIRE
+                              , APAVILLENAISS
+                              , APACALBIRTHDAY
+							  , APAPANCARD
+                              , APAPASSPORT
+                              , APAVOTERID
+                              , APADRIVINGLICENSE
+							  , APANATIONALITY
+                            )
+                            VALUES
+                            (
+                                NNEWACTID
+                              , DTAPADTNAISS
+                              , SAPADEPTNAISS
+                              , SAPACOMNAISS
+                              , NAPANBENFANT
+                              , NAPASEXE
+                              , SAPAPAYCODE
+                              , SAPAEMPLOYEUR
+                              , SAPASITFAM
+                              , NAPAFLAGPROPRIETE
+                              , SAPATITRE
+                              , NVL(SAPANOMMARITAL,SAPANOMPATONYME)
+                              , SAPAREGIMEMATRIM
+                              , SAPANOMPATONYME
+                              , SAPAPRENOM
+                              , SAPAMIDDLENAME
+                              , SAPACHREGIMEMATRIM
+                              , SAPACODENIVEAUETUDE
+                              , SAPADIRFONCTION
+                              , NAPAFLAGDIRIGEANT
+                              , NAPAFLAGHOMMECLE
+                              , NAPAFLAGINTERDITBANCAIRE
+                              , NAPAFLAGSUCCESSIONPRET
+                              , NAPAPCTCAPITAL
+                              , NAPAANEXPACTIVITE
+                              , NAPAEXPERIENCEFONCTION
+                              , DTAPADTPERMISDECONDUIRE
+                              , SAPAVILLENAISS
+                              , SAPACALBIRTHDAY
+							  , SAPAPANCARD
+                              , SAPAPASSPORT
+                              , SAPAVOTERID
+                              , SAPADRIVINGLICENSE
+							  , SAPANATIONALITY
+                            ) ;
+                        NRETURNCODE     := 0;
+                        IF SQL%ROWCOUNT  = 0 THEN
+                            NRETURNCODE := ERR_NO_ROWS_CONST;
+                        END IF;
+                    END;
+                END IF;
+                IF SCJUTYPE IN('I', 'J') THEN
+                    BEGIN
+                        INSERT INTO ACTEURINDIVISION
+                            (ACTID, AINNBPARTTOTAL
+                            ) VALUES
+                            (NNEWACTID, NAINNBPARTTOTAL
+                            ) ;
+                        NRETURNCODE     := 0;
+                        IF SQL%ROWCOUNT  = 0 THEN
+                            NRETURNCODE := ERR_NO_ROWS_CONST;
+                        END IF;
+                    END;
+                END IF;
+                IF NRETURNCODE = 0 THEN
+                    PACOM_EVT.I_EVT(STEVDEST, STMOMODULE, STMFFONCTION, NCREID, NNEWACTID, DTEFFET, STACCODE, NSYNCHRO, SUTICODECREAT, NULL, NRETURNCODE) ;
+                END IF;
+                IF NRETURNCODE = 0 THEN
+                    PA_EVT.U_EVT_VALIDE(NCREID,SUTICODECREAT, NRETURNCODE) ;
+                END IF;
+            END;
+            -- CASNT-107
+        END IF;
+        IF SACTSECTGESTION IS NOT NULL THEN
+            INSERT INTO ACTSECTGESTION
+                (ACTID, ACTSECTGESTION
+                ) VALUES
+                (NNEWACTID, SACTSECTGESTION
+                ) ;
+        END IF;
+    EXCEPTION
+    WHEN ERR_PARENT_NOT_FOUND THEN
+        -- CV-26012012 CFS55477
+        -- nReturnCode := ERR_PARENT_ACT_FOUND_CONST;
+        NRETURNCODE := F_GETFKMOREINFO(SQLERRM, ERR_PARENT_ACT_FOUND_CONST) ;
+    WHEN DUP_VAL_ON_INDEX THEN
+        NRETURNCODE := ERR_DUP_VAL_ON_ACTEUR_CONST ;
+    WHEN ERR_I_NULL_MANDATORY_KEY THEN
+        NRETURNCODE := ERR_VAL_ACT_NULL_CONST;
+    WHEN ERR_U_NULL_MANDATORY_KEY THEN
+        NRETURNCODE := ERR_VAL_ACT_NULL_CONST;
+    WHEN OTHERS THEN
+        NRETURNCODE := - 1 * SQLCODE;
+    END;
+END I_ACTEUR;
