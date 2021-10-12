@@ -1,0 +1,185 @@
+From MAILER-DAEMON  Tue Oct 12 15:16:00 2021
+Return-Path: <>
+X-Original-To: cassiopae@masterleasefrtlt01.localdomain
+Delivered-To: cassiopae@masterleasefrtlt01.localdomain
+Received: by masterleasefrtlt01.localdomain (Postfix)
+	id BF7775EB; Tue, 12 Oct 2021 15:16:00 +0100 (+01)
+Date: Tue, 12 Oct 2021 15:16:00 +0100 (+01)
+From: MAILER-DAEMON@masterleasefrtlt01.localdomain (Mail Delivery System)
+Subject: Mail Delivery Status Report
+To: cassiopae@masterleasefrtlt01.localdomain
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="ACD76B8.1634048160/masterleasefrtlt01.localdomain"
+Message-Id: <20211012141600.BF7775EB@masterleasefrtlt01.localdomain>
+
+This is a MIME-encapsulated message.
+
+--ACD76B8.1634048160/masterleasefrtlt01.localdomain
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host masterleasefrtlt01.localdomain.
+
+Enclosed is the mail delivery report that you requested.
+
+                   The mail system
+
+<MRmailer@socgen.com>: connect to socgen.com[10.4.2.211]:25: Connection refused
+
+--ACD76B8.1634048160/masterleasefrtlt01.localdomain
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; masterleasefrtlt01.localdomain
+X-Postfix-Queue-ID: ACD76B8
+X-Postfix-Sender: rfc822; cassiopae@masterleasefrtlt01.localdomain
+Arrival-Date: Tue, 12 Oct 2021 15:16:00 +0100 (+01)
+
+Final-Recipient: rfc822; MRmailer@socgen.com
+Action: delayed
+Status: 4.4.1
+Diagnostic-Code: X-Postfix; connect to socgen.com[10.4.2.211]:25: Connection
+    refused
+
+--ACD76B8.1634048160/masterleasefrtlt01.localdomain
+Content-Description: Message Headers
+Content-Type: text/rfc822-headers
+
+Return-Path: <cassiopae@masterleasefrtlt01.localdomain>
+Received: by masterleasefrtlt01.localdomain (Postfix, from userid 1008)
+	id ACD76B8; Tue, 12 Oct 2021 15:16:00 +0100 (+01)
+Subject: sendmail test
+Message-Id: <20211012141600.ACD76B8@masterleasefrtlt01.localdomain>
+Date: Tue, 12 Oct 2021 15:16:00 +0100 (+01)
+From: cassiopae@masterleasefrtlt01.localdomain (Utilisateur SOPRA)
+
+--ACD76B8.1634048160/masterleasefrtlt01.localdomain--
+
+From MAILER-DAEMON  Tue Oct 12 15:16:28 2021
+Return-Path: <>
+X-Original-To: cassiopae@masterleasefrtlt01.localdomain
+Delivered-To: cassiopae@masterleasefrtlt01.localdomain
+Received: by masterleasefrtlt01.localdomain (Postfix)
+	id F09045F2; Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+From: MAILER-DAEMON@masterleasefrtlt01.localdomain (Mail Delivery System)
+Subject: Undelivered Mail Returned to Sender
+To: cassiopae@masterleasefrtlt01.localdomain
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="EA60D5EB.1634048188/masterleasefrtlt01.localdomain"
+Message-Id: <20211012141628.F09045F2@masterleasefrtlt01.localdomain>
+
+This is a MIME-encapsulated message.
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host masterleasefrtlt01.localdomain.
+
+I'm sorry to have to inform you that your message could not
+be delivered to one or more recipients. It's attached below.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<kasraoui.mouad@gmail.com>: Host or domain name not found. Name service error
+    for name=gmail.com type=AAAA: Host not found
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; masterleasefrtlt01.localdomain
+X-Postfix-Queue-ID: EA60D5EB
+X-Postfix-Sender: rfc822; cassiopae@masterleasefrtlt01.localdomain
+Arrival-Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+
+Final-Recipient: rfc822; kasraoui.mouad@gmail.com
+Action: failed
+Status: 5.4.4
+Diagnostic-Code: X-Postfix; Host or domain name not found. Name service error
+    for name=gmail.com type=AAAA: Host not found
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Undelivered Message
+Content-Type: message/rfc822
+
+Return-Path: <cassiopae@masterleasefrtlt01.localdomain>
+Received: by masterleasefrtlt01.localdomain (Postfix, from userid 1008)
+	id EA60D5EB; Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+Subject: sendmail test
+Message-Id: <20211012141628.EA60D5EB@masterleasefrtlt01.localdomain>
+Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+From: cassiopae@masterleasefrtlt01.localdomain (Utilisateur SOPRA)
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain--
+
+From MAILER-DAEMON  Tue Oct 12 15:16:28 2021
+Return-Path: <>
+X-Original-To: cassiopae@masterleasefrtlt01.localdomain
+Delivered-To: cassiopae@masterleasefrtlt01.localdomain
+Received: by masterleasefrtlt01.localdomain (Postfix)
+	id F11AF5F3; Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+From: MAILER-DAEMON@masterleasefrtlt01.localdomain (Mail Delivery System)
+Subject: Mail Delivery Status Report
+To: cassiopae@masterleasefrtlt01.localdomain
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="EA60D5EB.1634048188/masterleasefrtlt01.localdomain"
+Message-Id: <20211012141628.F11AF5F3@masterleasefrtlt01.localdomain>
+
+This is a MIME-encapsulated message.
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host masterleasefrtlt01.localdomain.
+
+Enclosed is the mail delivery report that you requested.
+
+                   The mail system
+
+<kasraoui.mouad@gmail.com>: Host or domain name not found. Name service error
+    for name=gmail.com type=AAAA: Host not found
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; masterleasefrtlt01.localdomain
+X-Postfix-Queue-ID: EA60D5EB
+X-Postfix-Sender: rfc822; cassiopae@masterleasefrtlt01.localdomain
+Arrival-Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+
+Final-Recipient: rfc822; kasraoui.mouad@gmail.com
+Action: failed
+Status: 5.4.4
+Diagnostic-Code: X-Postfix; Host or domain name not found. Name service error
+    for name=gmail.com type=AAAA: Host not found
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain
+Content-Description: Message Headers
+Content-Type: text/rfc822-headers
+
+Return-Path: <cassiopae@masterleasefrtlt01.localdomain>
+Received: by masterleasefrtlt01.localdomain (Postfix, from userid 1008)
+	id EA60D5EB; Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+Subject: sendmail test
+Message-Id: <20211012141628.EA60D5EB@masterleasefrtlt01.localdomain>
+Date: Tue, 12 Oct 2021 15:16:28 +0100 (+01)
+From: cassiopae@masterleasefrtlt01.localdomain (Utilisateur SOPRA)
+
+--EA60D5EB.1634048188/masterleasefrtlt01.localdomain--
+
