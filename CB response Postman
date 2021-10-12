@@ -1,0 +1,127 @@
+{
+    "entete": {
+        "reportDt": "20211006",
+        "reportHr": 150934,
+        "errNb": "0",
+        "enqTransRefNumber": "15968504-66169356"
+    },
+    "inforeq": {
+        "genp": {
+            "beAppref": "0",
+            "beAppDt": "20180224",
+            "beEnqTyp": "01",
+            "beRespTyp": "1",
+            "beCredTyp": "0001",
+            "beCredPurp": 99,
+            "coIDTyp": "I",
+            "coID": "XX123456            ",
+            "beCredAmnt": "00000000000000000000",
+            "beIDCur": "MAD",
+            "coNm": "HAMZA                                             ",
+            "coFnm": "AIT B.MOHAMMED                                    ",
+            "coSex": "F",
+            "coBirthDT": "19720517",
+            "coadIDCi1": "270"
+        }
+    },
+    "detailRep": {
+        "idenP": {
+            "coNm": "HAMZA",
+            "coFnm": "AIT B.MOHAMMED",
+            "coIDTyp": "I",
+            "coID": "XX123456",
+            "coSex": "F",
+            "coBirthDT": "19720517"
+        },
+        "adresse": {},
+        "actionm": [],
+        "reqprec": [
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20180224",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000000000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20180224",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000000000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210303",
+                "subscriberID": "720",
+                "beCredTyp": "0001",
+                "beCredAmnt": "00000000000001000000",
+                "beIDCur": "MAD"
+            },
+            {
+                "beAppDt": "20210823",
+                "subscriberID": "720",
+                "beCredTyp": "0010",
+                "beCredAmnt": "00000000000000000100",
+                "beIDCur": "MAD"
+            }
+        ],
+        "sommairedetails": [
+            {
+                "totCredTyp": "0000",
+                "totahBal": "00000000000000000000",
+                "totacCredAmnt": "00000000000000000000",
+                "totahInstAmnt": "00000000000000000000",
+                "totahBalArr": "00000000000000000000"
+            }
+        ],
+        "error": []
+    },
+    "links": [
+        {
+            "rel": "self",
+            "href": "https://partner-bff-rct.sgmaroc.root.net/api/selfcare/partner-bff-service/v1/basic/credit-info/report"
+        }
+    ]
+}
