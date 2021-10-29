@@ -2624,7 +2624,41 @@ AS
                 NULL;
         END;
     END P_ACTIVE_CLT;
-     ----HME DELETE CHECKLIST SELON SEGMENTATION CLIENT
+    ---HME PROCESS DELETE CHECKLIST --SOGELEASE
+      PROCEDURE P_DELETE_CHECK_CLICOM(
+        P_LANCODE     LANPROCESS.LANCODE%TYPE,
+        P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
+        DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
+        P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
+        P_ACTID       ACTEUR.ACTID%TYPE,
+        P_PROID       PROCESS.PROID%TYPE,
+        P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
+        P_UTICODE     UTILISATEUR.UTICODE%TYPE)
+    AS
+    BEGIN
+        BEGIN
+            DELETE FROM ADMINISTRATIF where DOSIDPROSPECT=P_DOSID 
+			and forid=30000;
+        END;
+    END P_DELETE_CHECK_CLICOM;
+
+PROCEDURE P_DELETE_CHECK_CLIPRO(
+        P_LANCODE     LANPROCESS.LANCODE%TYPE,
+        P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
+        DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
+        P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
+        P_ACTID       ACTEUR.ACTID%TYPE,
+        P_PROID       PROCESS.PROID%TYPE,
+        P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
+        P_UTICODE     UTILISATEUR.UTICODE%TYPE)
+    AS
+    BEGIN
+        BEGIN
+            DELETE FROM ADMINISTRATIF where DOSIDPROSPECT=P_DOSID 
+			and forid=30100;
+        END;
+    END P_DELETE_CHECK_CLIPRO;
+    ----HME DELETE CHECKLIST SELON SEGMENTATION CLIENT
     PROCEDURE P_DELETE_CHECK(
         P_LANCODE     LANPROCESS.LANCODE%TYPE,
         P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
@@ -2640,77 +2674,66 @@ AS
          nACTID      VARCHAR2 (15) := NULL;
 		 nseg        VARCHAR2 (15) := NULL;
         BEGIN
-		
+
 		Select actid  into nACTID
            from dpracteur 
               where dosid =P_DOSID 
               and dprversion=DPRVERSION
               and rolcode in ('EMPRUNT','CLIENT') ;
-			  
+
 		SELECT CVASTRINGVALUE into nseg FROM CCHVALUE WHERE ACTID=nACTID and cchsid='CMBCCHSID82' ;
-       
-	IF (nseg IS NOT NULL AND nseg IN ('10201','10202')) THEN
-		
+
+
+		IF (nseg IS NOT NULL AND nseg IN ('10201','10202')) THEN 
+
             DELETE FROM ADMINISTRATIF where DOSIDPROSPECT=P_DOSID 
 			and forid=30000;
 		ELSE 
+
 		  DELETE FROM ADMINISTRATIF where DOSIDPROSPECT=P_DOSID 
 			and forid=30100;
         END IF;    
         END;
     END P_DELETE_CHECK;
-    
-    
-    
-                                                                                    ----ABH 20/03/3021   update CA module Acteur 
-     PROCEDURE P_LAST_ACTCA(        
-        P_LANCODE     LANPROCESS.LANCODE%TYPE,
-        P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
-        DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
-        P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
-        P_ACTID       ACTEUR.ACTID%TYPE,
-        P_PROID       PROCESS.PROID%TYPE,
-        P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
-        P_UTICODE     UTILISATEUR.UTICODE%TYPE)
-    AS
-    BEGIN
-	 DECLARE
-         Ndosid      VARCHAR2 (20) := NULL;
-         NCA        NUMBER := NULL;
-         Nblign     NUMBER := NULL;
-         Nactid      number:= NULL;
-         
-        BEGIN
-		
-    
-      select actid into Nactid from dpracteur where  ROLCODE='CLIENT' and dosid=P_DOSID ;
-    
-    
-      select max(dosid) into Ndosid
-              from dpracteur where ROLCODE='CLIENT'
-              and actid =Nactid ; 
-			  
-      select CVANUMERICVALUE into NCA from cchvalue where DOSIDPROSPECT=Ndosid and  cchsid='TFDCCHSID91';  
-        
-      select count (*) into Nblign from cchvalue 
-                where cchsid='TFDCCHSID220' and actid =Nactid; 
-                
-                
-                
-              IF (Nblign < 1) THEN
-                  
-                      Insert into cchvalue values (SEQ_CVAID.NEXTVAL,'TFDCCHSID220','ACTEUR',null,null,null,null,null,null,null,null,null,null,null,null,Nactid,null,null,null,null,'Actid-'||Nactid||'Ugecode-SGM||',null,null,null,null,null,null,null,null,null,null,null);      
-                
-                  ELSE
-    
-                       Update CCHVALUE set CVANUMERICVALUE= NCA where cchsid='TFDCCHSID220' and actid =Nactid ;
-                       
-        END IF;        
-        END;
-    END P_LAST_ACTCA;   
-    
-    
-    PROCEDURE P_SGMDTLIM (P_LANCODE     LANPROCESS.LANCODE%TYPE,        --ABH 07/04/2021  La date d’expiration d’une enveloppe est égale à la date d’effet de l’enveloppe incrémentée de la durée de validité moins un jour ;
+----HME PROCESS GENERATION DOSSIER ETUDE
+PROCEDURE P_FICHEPROP (P_LANCODE     LANPROCESS.LANCODE%TYPE,
+                              P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
+                              DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
+                              P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
+                              P_ACTID       ACTEUR.ACTID%TYPE,
+                              P_PROID       PROCESS.PROID%TYPE,
+                              P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
+                              P_UTICODE     UTILISATEUR.UTICODE%TYPE)
+   AS
+       BEGIN
+      DECLARE
+         nACTID      VARCHAR2 (15) := NULL;
+         nANNEE      VARCHAR2 (15) := NULL;
+
+      BEGIN
+      Select actid  into nACTID
+      from dpracteur 
+              where dosid =P_DOSID 
+              and dprversion=DPRVERSION
+              and rolcode in ('EMPRUNT','CLIENT') ;
+
+      select to_char (sysdate,'RRRR') -1 into nANNEE
+      from dual ;
+
+           Insert into ANALYSIS  values 
+			(SEQ_ANAID.NEXTVAL,
+			P_PFIID,
+			nACTID,
+			P_DOSID,
+			'NEGO',null,'AVDOSS','BILANSIMP',SYSDATE,'ORFI','CLIENT',null,
+      '5',null,null,null,null,null,null,null,'EC',nANNEE,null,null);
+
+  END ;
+   END P_FICHEPROP;
+
+
+
+PROCEDURE P_SGMDTLIM (P_LANCODE     LANPROCESS.LANCODE%TYPE,        --ABH 07/04/2021  La date d’expiration d’une enveloppe est égale à la date d’effet de l’enveloppe incrémentée de la durée de validité moins un jour ;
                               P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
                               DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
                               P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
@@ -2723,40 +2746,122 @@ AS
       DECLARE
          Nbmois    number ;
          Dtlim      date  ;
-         
+
 
       BEGIN
    /*   select decode (PFIPERIODICITE,'030',PFINBPERIODES/12,'360',PFINBPERIODES/1,'090',PFINBPERIODES/4,'180',PFINBPERIODES/2) 
             into Nbannee from PROPOSITIONFINANCIERE where pfiid in 
                 (select pfiid from dprpropfinance where DPFFLAGRETENUE=1 
                               and tpgcode in ('AUT02','AUT') and dosid=P_DOSID )  ; */
-                              
-       select decode (PFIPERIODICITE,'030',PFINBPERIODES,'360',PFINBPERIODES*12,'090',PFINBPERIODES*3,
+
+     /*  select decode (PFIPERIODICITE,'030',PFINBPERIODES,'360',PFINBPERIODES*12,'090',PFINBPERIODES*3,
             '180',PFINBPERIODES*6) 
             into  Nbmois 
             from PROPOSITIONFINANCIERE where pfiid in 
                 (select pfiid from dprpropfinance where DPFFLAGRETENUE=1 
-                              and tpgcode in ('AUT02','AUT') and dosid=P_DOSID )  ;   
-                              
-                              
-                              
+                              and tpgcode in ('AUT02','AUT') and dosid=P_DOSID )  ;   */
+
+
+
     /*  select to_date( to_char(extract (day from max( WSTDTEXEC)))||'/' ||
         to_char(extract (month from max( WSTDTEXEC)))||'/' || 
            to_char(extract( year from max( WSTDTEXEC)) +Nbannee) ,'dd/mm/yyyy') into Dtlim from dprworstep where dosid =P_DOSID 
            and worcode||wstorder 
              in (select worcode||wstorder from lanworstep where worcode in 
               ('WFCLIPRO','WFCLICOM')and lancode='FR' and wstlabel like '%écision%') ; */
-           select  MAX(ADD_MONTHS(WSTDTEXEC, Nbmois )) into Dtlim 
+            --select  MAX(ADD_MONTHS(WSTDTEXEC, Nbmois )) 
+           select  MAX(ADD_MONTHS(WSTDTEXEC, 12 )) 
+           into Dtlim 
                   from dprworstep where dosid =P_DOSID 
                    and worcode||wstorder 
                          in (select worcode||wstorder from lanworstep where worcode in 
                           ('WFCLIPRO','WFCLICOM')and lancode='FR' and wstlabel like '%écision%') ;         
-      
+
      update DPRPROPFINANCE set DPFDTLIMITE= Dtlim -1  where dosid =P_DOSID ;
-      
-      
-       
+
+
+
   END ;
    END P_SGMDTLIM;
-    
+
+   PROCEDURE P_FICHEEVAL (P_LANCODE     LANPROCESS.LANCODE%TYPE,
+                              P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
+                              DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
+                              P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
+                              P_ACTID       ACTEUR.ACTID%TYPE,
+                              P_PROID       PROCESS.PROID%TYPE,
+                              P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
+                              P_UTICODE     UTILISATEUR.UTICODE%TYPE)
+   AS
+       BEGIN
+      DECLARE
+         nACTID      VARCHAR2 (15) := NULL;
+         nANNEE      VARCHAR2 (15) := NULL;
+
+      BEGIN
+      Select actid  into nACTID
+      from dpracteur 
+              where dosid =P_DOSID 
+              and dprversion=DPRVERSION
+              and rolcode in ('EMPRUNT','CLIENT') ;
+
+      select to_char (sysdate,'RRRR') -1 into nANNEE
+      from dual ;
+
+           Insert into ANALYSIS  values 
+			(SEQ_ANAID.NEXTVAL,
+			P_PFIID,
+			nACTID,
+			P_DOSID,
+			'NEGO',null,'AVDOSS','BILANSIMP',SYSDATE,'ORFI','CLIENT',null,
+      '7000',null,null,null,null,null,null,null,'EC',nANNEE,null,null);
+
+  END ;
+   END P_FICHEEVAL;
+
+
+   PROCEDURE P_PS_PURGE (P_LANCODE     LANPROCESS.LANCODE%TYPE,
+                              P_DOSID       DOSSIERPROSPECT.DOSID%TYPE,
+                              DPRVERSION    DOSSIERPROSPECT.DPRVERSION%TYPE,
+                              P_PFIID       DPRPROPFINANCE.PFIID%TYPE,
+                              P_ACTID       ACTEUR.ACTID%TYPE,
+                              P_PROID       PROCESS.PROID%TYPE,
+                              P_PSTORDRE    PROSTEP.PSTORDRE%TYPE,
+                              P_UTICODE     UTILISATEUR.UTICODE%TYPE)
+   AS
+       BEGIN
+      DECLARE
+         ncount1      number (15) := NULL;
+         nCOUNT      number (15) := NULL;
+         nDOSID     number (15) := NULL;
+
+      BEGIN
+
+
+             SELECT  count (*) 
+            INTO  ncount1
+            FROM dprdecision  
+            WHERE  DOSID = nDOSID           
+            AND adecode ='ACCORD';    
+
+
+            SELECT  count(*)  
+			INTO nCOUNT
+            FROM PFISIMULATION  
+            WHERE  PFIID in ( SELECT  PFIID   
+             FROM DPRPROPFINANCE  
+             WHERE  DOSID = nDOSID )   ;  
+
+
+     IF   ( ncount1 > 0  AND nCOUNT  > 0   )     THEN
+
+     Delete from PFISIMULATION where pfiid in ( SELECT  PFIID FROM DPRPROPFINANCE  WHERE  DOSID = nDOSID )   ;
+
+
+        END IF ;
+  END ;
+   END P_PS_PURGE;
+
+
+
 END PAV4_STEPS;
