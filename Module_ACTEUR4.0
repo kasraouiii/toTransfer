@@ -1,0 +1,63 @@
+---Masquer les sections et event des acteurs sur la 4.0
+
+
+Insert into CONFIGURATIONKEY (CKEID,TPGCODE,UGECODE,JALCODE,UTICODE,PHACODE,PHADEST,GROCODE,TACCODE,ACTID,CKETYPE,CKECONTEXT,CKENAME,CKEWEIGHT,TBTCODE,TBNCODE) values 
+('2895',null,'SGM',null,null,null,'ACTEUR',null,null,null,'H',null,null,'999999',null,null);
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secIdentite','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secParticulier','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secAddresses','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secBankAccounts','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secContacts','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secRole','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secActRelance','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secRelatedActors','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secContactNote','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secAdministratif','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secDocManagement','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmActeurDetail.acteurDetailBody.secIssuance','0','0','1','0');
+
+Insert into LKCKEGRE  values ('2895','frmListeActeur.tblActeurList.btnNew','0','0','1','0');
+
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_ADRREMP';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_MRAIS';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_RIBREMP';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_DOUTMAN' 
+and GROCODE!='SGM16';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_MIMPAYE';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION like 'EVACT_PHAREMP';
+
+update LKGROTMFDROIT set GFDCREER=0,GFDMODIFIER=0,GFDSUPPRIMER=0,GFDVOIR=0  where TMFFONCTION in ('EVACT_PROCIND','EVACT_PROCJUD','EVACT_PRVDOUT','EVACT_RATREMP');
+
+
+-------------------A ne pas lancer
+
+----Insert into CONFIGURATIONKEY (CKEID,TPGCODE,UGECODE,JALCODE,UTICODE,PHACODE,PHADEST,GROCODE,TACCODE,ACTID,CKETYPE,CKECONTEXT,CKENAME,CKEWEIGHT,TBTCODE,TBNCODE)
+---values ('2896',null,null,null,null,null,'ACTEUR','SGM16',null,null,'H',null,null,'255',null,null);
+
+----Insert into LKCKEGRE  values ('2896','frmActeurDetail.acteurDetailBody.secIdentite.pnlGrpTabIdentite.pnlTabIdentite6.chkActFlagNonDeclassable','0','0','0','0');
+
+
+
+
+
+
+
+
