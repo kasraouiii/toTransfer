@@ -1,0 +1,1189 @@
+CREATE OR REPLACE PACKAGE AVSGM19.PACOM_ORFICONTROLE_SHARED
+AS
+    TYPE T_CURSOR IS REF CURSOR;
+
+    PROCEDURE OCONTROLEOCCURRENCE (
+        NIDENTIFIANT           IN     NUMBER,
+        SDESTINATION           IN     VARCHAR2,
+        NCTLID                 IN OUT NUMBER,
+        SCONTROLE              IN     VARCHAR2,
+        NRETOUR                IN OUT NUMBER,
+        NERREURBLOQUANTE       IN OUT NUMBER,
+        NWARNING               IN OUT NUMBER,
+        NDEROGATION            IN OUT NUMBER,
+        NCREID                 IN     NUMBER,
+        CREVT_REC                     CREVT%ROWTYPE,
+        NFLAGSTEPPERPHASE      IN     NUMBER,
+        SUTICODE               IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE               IN     UTILISATEUR.UGECODE%TYPE,
+        NTCEFLAGUSERROLLBACK   IN     NUMBER);
+
+    FUNCTION OCONTROLEAVDOSS (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONTRAT_REC        IN     DOSSIERPROSPECT%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER;
+
+    FUNCTION OCONTROLEFRDOSS (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONTRAT_REC        IN     DOSSIERPROSPECT%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER;
+
+    FUNCTION OCONTROLEBIEN (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        BIEN_REC           IN     BIENIMMOBILIER%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        STUGECODE          IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER;
+
+    FUNCTION OCONTROLECOLLATERAL (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONCOLLATE_REC     IN     COLLATERAL%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER;
+END PACOM_ORFICONTROLE_SHARED;
+/
+CREATE OR REPLACE PACKAGE BODY AVSGM19.PACOM_ORFICONTROLE_SHARED
+AS
+    SGUSER      UTILISATEUR.UTICODE%TYPE;
+    SGUGECODE   UTILISATEUR.UGECODE%TYPE;
+
+    PROCEDURE OCONTROLEOCCURRENCE (
+        NIDENTIFIANT           IN     NUMBER,
+        SDESTINATION           IN     VARCHAR2,
+        NCTLID                 IN OUT NUMBER,
+        SCONTROLE              IN     VARCHAR2,
+        NRETOUR                IN OUT NUMBER,
+        NERREURBLOQUANTE       IN OUT NUMBER,
+        NWARNING               IN OUT NUMBER,
+        NDEROGATION            IN OUT NUMBER,
+        NCREID                 IN     NUMBER,
+        CREVT_REC                     CREVT%ROWTYPE,
+        NFLAGSTEPPERPHASE      IN     NUMBER,
+        SUTICODE               IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE               IN     UTILISATEUR.UGECODE%TYPE,
+        NTCEFLAGUSERROLLBACK   IN     NUMBER)
+    AS
+    BEGIN
+        DECLARE
+            ID_NOT_FOUND     EXCEPTION;
+            CONTRAT_REC      DOSSIERPROSPECT%ROWTYPE;
+            BIEN_REC         BIENIMMOBILIER%ROWTYPE;
+            CONCOLLATE_REC   COLLATERAL%ROWTYPE;
+        BEGIN
+            NCTLID := NULL;
+            NRETOUR := NULL;
+            NWARNING := 0;
+            NERREURBLOQUANTE := 0;
+            NDEROGATION := 0;
+
+            IF SDESTINATION = 'AVDOSS'
+            THEN
+                BEGIN
+                    SELECT *
+                      INTO CONTRAT_REC
+                      FROM DOSSIERPROSPECT
+                     WHERE     DOSID = NIDENTIFIANT
+                           AND DPRVERSION = (SELECT DPRVERSION
+                                               FROM V_DEAL VDE
+                                              WHERE VDE.DOSID = NIDENTIFIANT);
+
+                    NRETOUR :=
+                        OCONTROLEAVDOSS (NIDENTIFIANT,
+                                         SCONTROLE,
+                                         NCTLID,
+                                         CONTRAT_REC,
+                                         NERREURBLOQUANTE,
+                                         NWARNING,
+                                         NDEROGATION,
+                                         SUTICODE,
+                                         SUGECODE,
+                                         CREVT_REC);
+                    PAV4_TRACE.DEBUG (
+                           'AVDOSS oControleAvDoss Retour='
+                        || TO_CHAR (NRETOUR)
+                        || 'nErreurBloquante='
+                        || TO_CHAR (NERREURBLOQUANTE));
+                EXCEPTION
+                    WHEN NO_DATA_FOUND
+                    THEN
+                        PAV4_TRACE.ERROR (
+                            'AVDOSS oControleAvDoss id_not_found');
+                        RAISE ID_NOT_FOUND;
+                END;
+            ELSIF SDESTINATION = 'FRDOSS'
+            THEN
+                BEGIN
+                    SELECT *
+                      INTO CONTRAT_REC
+                      FROM DOSSIERPROSPECT
+                     WHERE     DOSID = NIDENTIFIANT
+                           AND DPRVERSION = (SELECT DPRVERSION
+                                               FROM V_DEAL VDE
+                                              WHERE VDE.DOSID = NIDENTIFIANT);
+
+                    NRETOUR :=
+                        OCONTROLEFRDOSS (NIDENTIFIANT,
+                                         SCONTROLE,
+                                         NCTLID,
+                                         CONTRAT_REC,
+                                         NERREURBLOQUANTE,
+                                         NWARNING,
+                                         NDEROGATION,
+                                         SUTICODE,
+                                         SUGECODE,
+                                         CREVT_REC);
+                    PAV4_TRACE.DEBUG (
+                           'FRDOSS oControleAvDoss Retour='
+                        || TO_CHAR (NRETOUR)
+                        || 'nErreurBloquante='
+                        || TO_CHAR (NERREURBLOQUANTE));
+                EXCEPTION
+                    WHEN NO_DATA_FOUND
+                    THEN
+                        PAV4_TRACE.ERROR (
+                            'FRDOSS oControleFrDoss id_not_found');
+                        RAISE ID_NOT_FOUND;
+                END;
+            ELSIF SDESTINATION = 'BIEN'
+            THEN
+                BEGIN
+                    SELECT *
+                      INTO BIEN_REC
+                      FROM BIENIMMOBILIER
+                     WHERE BIMID = NIDENTIFIANT;
+
+                    NRETOUR :=
+                        OCONTROLEBIEN (NIDENTIFIANT,
+                                       SCONTROLE,
+                                       NCTLID,
+                                       BIEN_REC,
+                                       NERREURBLOQUANTE,
+                                       NWARNING,
+                                       SUTICODE,
+                                       SUGECODE,
+                                       CREVT_REC);
+                    PAV4_TRACE.DEBUG (
+                        'BIEN Identifiant : ' || TO_CHAR (NIDENTIFIANT));
+                    PAV4_TRACE.DEBUG (
+                        'BIEN oControleBien Retour=' || TO_CHAR (NRETOUR));
+                EXCEPTION
+                    WHEN NO_DATA_FOUND
+                    THEN
+                        PAV4_TRACE.ERROR ('BIEN oControleBien id_not_found');
+                        RAISE ID_NOT_FOUND;
+                END;
+            ELSIF SDESTINATION = 'COLLATE'
+            THEN
+                BEGIN
+                    SELECT *
+                      INTO CONCOLLATE_REC
+                      FROM COLLATERAL
+                     WHERE COLID = NIDENTIFIANT;
+
+                    NRETOUR :=
+                        OCONTROLECOLLATERAL (NIDENTIFIANT,
+                                             SCONTROLE,
+                                             NCTLID,
+                                             CONCOLLATE_REC,
+                                             NERREURBLOQUANTE,
+                                             NWARNING,
+                                             NDEROGATION,
+                                             SUTICODE,
+                                             SUGECODE,
+                                             CREVT_REC);
+                --PAV4_TRACE.DEBUG(' COLLATE oControleCollateral Retour=' || to_char(nRetour));
+                EXCEPTION
+                    WHEN NO_DATA_FOUND
+                    THEN
+                        PAV4_TRACE.ERROR (
+                            'COLLATE oControleCollateral id_not_found');
+                        RAISE ID_NOT_FOUND;
+                END;
+            END IF;
+        END;
+    END OCONTROLEOCCURRENCE;
+
+    FUNCTION OCONTROLECOLLATERAL (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONCOLLATE_REC     IN     COLLATERAL%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER
+    IS
+    BEGIN
+        DECLARE
+            NRETOUR          NUMBER;
+            PREMIERPASSAGE   BOOLEAN;
+            SPHASE           PHASE.PHACODE%TYPE;
+
+            CURSOR CPARA
+            IS
+                SELECT TPCCODE
+                  FROM TPARAGRAPHECTL
+                 WHERE TPCDEST = 'COLLATE';
+
+            CURSOR CCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                  SELECT PTC.TTCCODE, PTC.PTCFLAGUSER
+                    FROM LKPHATTC PTC, TPCTACCONTROLE TPC
+                   WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                         AND PTC.TPCCODE = TPC.TPCCODE
+                         AND PTC.TPCDEST = TPC.TPCDEST
+                         AND PTC.TACCODE = TPC.TACCODE
+                         AND PTC.TTCCODE = TPC.TTCCODE
+                         AND PTC.TPCCODE = S1
+                         AND PTC.TPCDEST = 'COLLATE'
+                         AND PTC.PHACODE = SPHASE
+                         AND NVL (PTC.PTCFLAGACTIF, 0) != 2
+                         AND NVL (PTC.PTCFLAGUSER, 0) != 0
+                         AND PTC.TACCODE = 'GLOBAL'
+                         AND F_PLDEROGATORYEXECUTEDCTL (
+                                 CONCOLLATE_REC.COLID,
+                                 NVL (PTC.PTCFLAGUSER, 0),
+                                 PTC.TPCCODE,
+                                 PTC.TTCCODE,
+                                 'COLLATE') =
+                             0
+                ORDER BY PTC.TPCCODE, PTC.TTCCODE;
+
+            CURSOR CEVCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                SELECT TEC.TTCCODE, TEC.TCEFLAGUSER
+                  FROM LKTTCTEV TEC, TPCTACCONTROLE TPC
+                 WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                       AND TEC.TPCCODE = TPC.TPCCODE
+                       AND TEC.TPCDEST = TPC.TPCDEST
+                       AND TEC.TACCODE = TPC.TACCODE
+                       AND TEC.TTCCODE = TPC.TTCCODE
+                       AND TEC.TMOMODULE = CREVT_REC.TMOMODULE
+                       AND TEC.TMFFONCTION = CREVT_REC.TMFFONCTION
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 0
+                       AND NVL (TEC.TCEFLAGACTIF, 0) != 2
+                       AND TEC.TACCODE = 'GLOBAL'
+                       AND TEC.TPCCODE = S1
+                       AND TEC.TPCDEST = 'COLLATE'
+                       AND TEC.TEVDEST = 'COLLATE'
+                       AND NVL (TEC.TSTID, 0) = -1
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 3;
+        BEGIN
+            BEGIN
+                SELECT PHACODE
+                  INTO SPHASE
+                  FROM COLPHASE
+                 WHERE COLID = CONCOLLATE_REC.COLID AND CPHDTEND IS NULL;
+            EXCEPTION
+                WHEN OTHERS
+                THEN
+                    SPHASE := 'INI';
+            END;
+
+            -- Par defaut, initialisation a pas de controle trouve The default initialization has no control is
+            NRETOUR := 0;
+            PREMIERPASSAGE := TRUE;
+
+            FOR CPARA_REC IN CPARA
+            LOOP
+                IF PREMIERPASSAGE
+                THEN
+                    SELECT SEQ_RCTID.NEXTVAL INTO NCTLID FROM DUAL;
+
+                    INSERT INTO RAPPORTCTL (RCTDESTINATION,
+                                            RCTDESTID,
+                                            RCTDTCREAT,
+                                            UTICODE,
+                                            RCTEVTID,
+                                            RCTCTLTYPE,
+                                            TACCODE)
+                         VALUES ('COLLATE',
+                                 NIDENTIFIANT,
+                                 SYSDATE,
+                                 SGUSER,
+                                 NCTLID,
+                                 SCONTROLE,
+                                 'GLOBAL');
+
+                    PREMIERPASSAGE := FALSE;
+                END IF;
+
+                IF SCONTROLE = 'E'
+                THEN
+                    FOR CEVCTL_REC IN CEVCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        --PAV4_TRACE.DEBUG ( cPara_rec.tpccode || ' - ' || cEvCtl_rec.ttccode );
+                        PA_COLLATERALCONTROLE.PCOLLATERAL (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CEVCTL_REC.TTCCODE,
+                            CEVCTL_REC.TCEFLAGUSER,
+                            SCONTROLE,
+                            CONCOLLATE_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        --We found at least one control to pass on the occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                ELSE
+                    FOR CCTL_REC IN CCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        --PAV4_TRACE.DEBUG(to_char(nidentifiant) ||';'|| to_char(nctlid)
+                        --||';'|| cPara_rec.tpccode ||';'|| cCtl_rec.ttccode ||';'|| to_char(cCtl_rec.ptcflaguser)
+                        --||';'|| sControle ||';'|| to_char(nErreurBloquante) ||';'|| to_char(nWarning) ||';' );
+                        PA_COLLATERALCONTROLE.PCOLLATERAL (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CCTL_REC.TTCCODE,
+                            CCTL_REC.PTCFLAGUSER,
+                            SCONTROLE,
+                            CONCOLLATE_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        -- We found at least one control to pass on the occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                END IF;
+            END LOOP;
+
+            RETURN NRETOUR;
+        END;
+    END OCONTROLECOLLATERAL;
+
+    FUNCTION OCONTROLEAVDOSS (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONTRAT_REC        IN     DOSSIERPROSPECT%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER
+    IS
+    BEGIN
+        DECLARE
+            SPHASE           VARCHAR2 (100);
+
+            CURSOR CPARA
+            IS
+                  SELECT DISTINCT TPCCODE
+                    FROM TPARAGRAPHECTL
+                   WHERE TPCDEST = 'AVDOSS'
+                ORDER BY TPCCODE;
+
+            CURSOR CCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                  SELECT DISTINCT PTC.TTCCODE, PTC.PTCFLAGUSER
+                    FROM LKPHATTC PTC, TPCTACCONTROLE TPC
+                   WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                         AND PTC.TPCCODE = TPC.TPCCODE
+                         AND PTC.TPCDEST = TPC.TPCDEST
+                         AND PTC.TACCODE = TPC.TACCODE
+                         AND PTC.TTCCODE = TPC.TTCCODE
+                         AND PTC.TPCCODE = S1
+                         AND PTC.TPCDEST = 'AVDOSS'
+                         AND PTC.PHACODE = SPHASE
+                         AND NVL (PTC.PTCFLAGACTIF, 0) != 2
+                         AND NVL (PTC.PTCFLAGUSER, 0) != 0
+                         AND PTC.TACCODE IN (CONTRAT_REC.TACCODE, 'GLOBAL')
+                         AND PTC.TPGCODE IN (CONTRAT_REC.TPGCODE, 'TOUT')
+                         AND F_PLDEROGATORYEXECUTEDCTL (
+                                 CONTRAT_REC.DOSID,
+                                 NVL (PTC.PTCFLAGUSER, 0),
+                                 PTC.TPCCODE,
+                                 PTC.TTCCODE,
+                                 'AVDOSS') =
+                             0
+                         AND PTC.TTCCODE NOT IN
+                                 (SELECT TTCCODE
+                                    FROM DPRCTRLDERO
+                                   WHERE     DOSID = NIDENTIFIANT
+                                         AND DPRVERSION =
+                                             PA_AVCOMMUN.F_DERNIEREVERSIONDOSSIER (
+                                                 NIDENTIFIANT)
+                                         AND DCDSTATUS = 'D_DACC'
+                                         AND EXISTS
+                                                 (SELECT 1
+                                                    FROM CREVALID
+                                                   WHERE     CREID =
+                                                             DPRCTRLDERO.CREID
+                                                         AND CVADECISION =
+                                                             'CONFM'))
+                ORDER BY PTC.TTCCODE;
+
+            CURSOR CEVCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+            
+                SELECT DISTINCT TEC.TTCCODE, TEC.TCEFLAGUSER
+                  FROM LKTTCTEV TEC, TPCTACCONTROLE TPC
+                 WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                       AND TEC.TPCCODE = TPC.TPCCODE
+                       AND TEC.TPCDEST = TPC.TPCDEST
+                       AND TEC.TACCODE = TPC.TACCODE
+                       AND TEC.TTCCODE = TPC.TTCCODE
+                       AND TEC.TMOMODULE = CREVT_REC.TMOMODULE
+                       AND TEC.TMFFONCTION = CREVT_REC.TMFFONCTION
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 0
+                       AND NVL (TEC.TCEFLAGACTIF, 0) != 2
+                       AND TEC.TACCODE IN (CONTRAT_REC.TACCODE, 'GLOBAL')
+                       AND TEC.TPCCODE = S1
+                       AND TEC.TPCDEST = 'AVDOSS'
+                       AND TEC.TEVDEST = 'AVDOSS'
+                       AND TEC.TPGCODE IN (CONTRAT_REC.TPGCODE, 'TOUT')
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 3;
+                    
+             CURSOR CEVCTLSGM (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+            
+                SELECT DISTINCT TEC.TTCCODE, TEC.TCEFLAGUSER
+                  FROM LKTTCTEV TEC, TPCTACCONTROLE TPC
+                 WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                       AND TEC.TPCCODE = TPC.TPCCODE
+                       AND TEC.TPCDEST = TPC.TPCDEST
+                       AND TEC.TACCODE = TPC.TACCODE
+                       AND TEC.TTCCODE = TPC.TTCCODE
+                       AND TEC.TMOMODULE = 'AVDOSS'
+                       AND TEC.TMFFONCTION = 'EVF_VALIDER'
+                       AND TEC.TTCCODE='U_CLEXT'
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 0
+                       AND NVL (TEC.TCEFLAGACTIF, 0) != 2
+                       AND TEC.TACCODE IN (CONTRAT_REC.TACCODE, 'GLOBAL')
+                       AND TEC.TPCCODE = S1
+                       AND TEC.TPCDEST = 'AVDOSS'
+                       AND TEC.TEVDEST = 'AVDOSS'
+                       AND TEC.TPGCODE IN (CONTRAT_REC.TPGCODE, 'TOUT')
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 3;
+                    
+            
+            CURSOR CWFCTL
+            IS
+                SELECT WCO.WSCACTIONCODE, 1
+                  FROM DPRWORSTEP DWS, WSTCONSEQUENCE WCO
+                 WHERE     DWS.DOSID = NIDENTIFIANT
+                       AND DWS.DPRVERSION =
+                           PA_AVCOMMUN.F_DERNIEREVERSIONDOSSIER (
+                               NIDENTIFIANT)
+                       AND DWS.WORCODE = WCO.WORCODE
+                       AND DWS.WSTORDER = WCO.WSTORDER
+                       AND WCO.WSCACTIONTYPE = 'CONTROLS'
+                       AND DWS.WSTDTEXEC =
+                           (SELECT MAX (WSTDTEXEC)
+                              FROM DPRWORSTEP
+                             WHERE     DOSID = NIDENTIFIANT
+                                   AND DPRVERSION =
+                                       PA_AVCOMMUN.F_DERNIEREVERSIONDOSSIER (
+                                           NIDENTIFIANT) --AND WSTSTATUS = 'TER'
+                                                        );
+
+            NRETOUR          NUMBER;
+            PREMIERPASSAGE   BOOLEAN;
+        BEGIN
+            IF NIDENTIFIANT IS NOT NULL
+            THEN
+                SELECT DPRVERSION
+                  INTO SPHASE
+                  FROM V_DEAL
+                 WHERE DOSID = NIDENTIFIANT;
+            END IF;
+
+            -- Par defaut, initialisation a pas de controle trouve
+            NRETOUR := 0;
+            PREMIERPASSAGE := TRUE;
+
+            FOR CPARA_REC IN CPARA
+            LOOP
+                IF PREMIERPASSAGE
+                THEN
+                    SELECT SEQ_RCTID.NEXTVAL INTO NCTLID FROM DUAL;
+
+                    PAV4_TRACE.DEBUG (
+                           'Entree'
+                        || ';'
+                        || 'CONTRAT'
+                        || ';'
+                        || TO_CHAR (NIDENTIFIANT)
+                        || ';'
+                        || SGUSER
+                        || ';'
+                        || TO_CHAR (NCTLID)
+                        || ';'
+                        || SCONTROLE
+                        || ';'
+                        || CONTRAT_REC.TACCODE
+                        || ';');
+
+                    --AkshiK INSERT RAPPORTCTL
+                    INSERT INTO RAPPORTCTL (RCTDESTINATION,
+                                            RCTDESTID,
+                                            RCTDTCREAT,
+                                            UTICODE,
+                                            RCTEVTID,
+                                            RCTCTLTYPE,
+                                            TACCODE)
+                         VALUES ('AVDOSS',
+                                 NIDENTIFIANT,
+                                 SYSDATE,
+                                 SGUSER,
+                                 NCTLID,
+                                 SCONTROLE,
+                                 CONTRAT_REC.TACCODE);
+
+                    PREMIERPASSAGE := FALSE;
+                END IF;
+
+                IF SCONTROLE = 'E'
+                THEN
+                    FOR CEVCTL_REC IN CEVCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CEVCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CEVCTL_REC.TCEFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+                        PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CEVCTL_REC.TTCCODE,
+                            CEVCTL_REC.TCEFLAGUSER,
+                            SCONTROLE,
+                            CONTRAT_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                    -------- spécifique SGM pour déclencher le contrôle U_CLEXT uniquement sur étape n°1 initiation du workflow -------
+                    FOR CEVCTL_REC IN CEVCTLSGM (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CEVCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CEVCTL_REC.TCEFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+                        PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CEVCTL_REC.TTCCODE,
+                            CEVCTL_REC.TCEFLAGUSER,
+                            SCONTROLE,
+                            CONTRAT_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                ELSE
+                    FOR CCTL_REC IN CCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CCTL_REC.PTCFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+
+                        IF    SUBSTR (CPARA_REC.TPCCODE, 1, 1) = 'U'
+                           OR CPARA_REC.TPCCODE = 'A01'
+                           OR CPARA_REC.TPCCODE = 'DOSACTE'
+                        THEN
+                            PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                                NIDENTIFIANT,
+                                NCTLID,
+                                CPARA_REC.TPCCODE,
+                                CCTL_REC.TTCCODE,
+                                CCTL_REC.PTCFLAGUSER,
+                                SCONTROLE,
+                                CONTRAT_REC,
+                                CREVT_REC,
+                                NERREURBLOQUANTE,
+                                NWARNING,
+                                SUTICODE,
+                                SUGECODE,
+                                NDEROGATION);
+                            PAV4_TRACE.DEBUG (
+                                   TO_CHAR (NIDENTIFIANT)
+                                || ';'
+                                || TO_CHAR (NCTLID)
+                                || ';'
+                                || CPARA_REC.TPCCODE
+                                || ';'
+                                || CCTL_REC.TTCCODE
+                                || ';'
+                                || TO_CHAR (CCTL_REC.PTCFLAGUSER)
+                                || ';'
+                                || SCONTROLE
+                                || ';'
+                                || TO_CHAR (NERREURBLOQUANTE)
+                                || ';'
+                                || TO_CHAR (NWARNING)
+                                || ';');
+                        END IF;
+
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                END IF;
+            END LOOP;
+
+            IF SCONTROLE = 'W'
+            THEN
+                FOR CWFCTL_REC IN CWFCTL
+                LOOP
+                    PAV4_TRACE.DEBUG (
+                           TO_CHAR (NIDENTIFIANT)
+                        || ';'
+                        || TO_CHAR (NCTLID)
+                        || ';'
+                        || CWFCTL_REC.WSCACTIONCODE
+                        || ';'
+                        || TO_CHAR (1)
+                        || ';'
+                        || SCONTROLE
+                        || ';'
+                        || TO_CHAR (NERREURBLOQUANTE)
+                        || ';'
+                        || TO_CHAR (NWARNING)
+                        || ';');
+
+                    IF SUBSTR (CWFCTL_REC.WSCACTIONCODE, 1, 1) = 'U'
+                    THEN
+                        PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            'U_DPR',
+                            CWFCTL_REC.WSCACTIONCODE,
+                            1,
+                            SCONTROLE,
+                            CONTRAT_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        PAV4_TRACE.DEBUG (
+                            'nErreurBloquante' || TO_CHAR (NERREURBLOQUANTE));
+                        NRETOUR := 1;
+                    END IF;
+                END LOOP;
+            END IF;
+
+            RETURN NRETOUR;
+        END;
+    END OCONTROLEAVDOSS;
+
+    FUNCTION OCONTROLEBIEN (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        BIEN_REC           IN     BIENIMMOBILIER%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        STUGECODE          IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER
+    IS
+    BEGIN
+        DECLARE
+            SPHASE           VARCHAR2 (100);
+
+            CURSOR CPARA
+            IS
+                  SELECT TPCCODE
+                    FROM TPARAGRAPHECTL
+                   WHERE TPCDEST = 'BIEN'
+                ORDER BY TPCCODE;
+
+            CURSOR CCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                  SELECT PTC.TTCCODE, PTC.PTCFLAGUSER
+                    FROM LKPHATTC PTC, TPCTACCONTROLE TPC
+                   WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                         AND PTC.TPCCODE = TPC.TPCCODE
+                         AND PTC.TPCDEST = TPC.TPCDEST
+                         AND PTC.TACCODE = TPC.TACCODE
+                         AND PTC.TTCCODE = TPC.TTCCODE
+                         AND PTC.TPCCODE = S1
+                         AND PTC.TPCDEST = 'BIEN'
+                         AND PTC.PHACODE = SPHASE
+                         AND NVL (PTC.PTCFLAGACTIF, 0) != 2
+                         AND NVL (PTC.PTCFLAGUSER, 0) != 0
+                         AND PTC.TACCODE = 'GLOBAL'
+                ORDER BY PTC.TTCCODE;
+
+            CURSOR CEVCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                SELECT TEC.TTCCODE, TEC.TCEFLAGUSER
+                  FROM LKTTCTEV TEC, TPCTACCONTROLE TPC
+                 WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                       AND TEC.TPCCODE = TPC.TPCCODE
+                       AND TEC.TPCDEST = TPC.TPCDEST
+                       AND TEC.TACCODE = TPC.TACCODE
+                       AND TEC.TTCCODE = TPC.TTCCODE
+                       AND TEC.TMOMODULE = CREVT_REC.TMOMODULE
+                       AND TEC.TMFFONCTION = CREVT_REC.TMFFONCTION
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 0
+                       AND NVL (TEC.TCEFLAGACTIF, 0) != 2
+                       AND TEC.TACCODE = 'GLOBAL'
+                       AND TEC.TPCCODE = S1
+                       AND TEC.TPCDEST = 'BIEN'
+                       AND NVL (TEC.TSTID, 0) = -1
+                       AND                                       -- CASNT 5375
+                           TEC.TEVDEST = 'BIEN';
+
+            NRETOUR          NUMBER;
+            PREMIERPASSAGE   BOOLEAN;
+        BEGIN
+            BEGIN
+                SELECT PHACODE
+                  INTO SPHASE
+                  FROM BIMPHASE
+                 WHERE BIMID = BIEN_REC.BIMID AND BPHDTFIN IS NULL;
+            EXCEPTION
+                WHEN NO_DATA_FOUND
+                THEN
+                    SPHASE := 'INI';
+            END;
+
+            -- Par defaut, initialisation a pas de controle trouve
+            NRETOUR := 0;
+            PREMIERPASSAGE := TRUE;
+
+            FOR CPARA_REC IN CPARA
+            LOOP
+                IF PREMIERPASSAGE
+                THEN
+                    SELECT SEQ_RCTID.NEXTVAL INTO NCTLID FROM DUAL;
+
+                    PAV4_TRACE.DEBUG (
+                           'Entree'
+                        || ';'
+                        || 'BIEN IMMO.'
+                        || ';'
+                        || TO_CHAR (NIDENTIFIANT)
+                        || ';'
+                        || SGUSER
+                        || ';'
+                        || TO_CHAR (NCTLID)
+                        || ';'
+                        || SCONTROLE
+                        || ';'
+                        || 'GLOBAL'
+                        || ';');
+
+                    --AkshiK INSERT RAPPORTCTL
+                    INSERT INTO RAPPORTCTL (RCTDESTINATION,
+                                            RCTDESTID,
+                                            RCTDTCREAT,
+                                            UTICODE,
+                                            RCTEVTID,
+                                            RCTCTLTYPE,
+                                            TACCODE)
+                         VALUES ('BIEN',
+                                 NIDENTIFIANT,
+                                 SYSDATE,
+                                 SGUSER,
+                                 NCTLID,
+                                 SCONTROLE,
+                                 'GLOBAL');
+
+                    PREMIERPASSAGE := FALSE;
+                END IF;
+
+                IF SCONTROLE = 'E'
+                THEN
+                    FOR CEVCTL_REC IN CEVCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PA_BIENIMMOBILIERCONTROLE.PBIEN (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CEVCTL_REC.TTCCODE,
+                            CEVCTL_REC.TCEFLAGUSER,
+                            SCONTROLE,
+                            BIEN_REC,
+                            NERREURBLOQUANTE,
+                            SUTICODE,
+                            STUGECODE,
+                            NWARNING,
+                            CREVT_REC);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                ELSE
+                    FOR CCTL_REC IN CCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CCTL_REC.PTCFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+                        PA_BIENIMMOBILIERCONTROLE.PBIEN (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CCTL_REC.TTCCODE,
+                            CCTL_REC.PTCFLAGUSER,
+                            SCONTROLE,
+                            BIEN_REC,
+                            NERREURBLOQUANTE,
+                            SUTICODE,
+                            STUGECODE,
+                            NWARNING,
+                            CREVT_REC);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                END IF;
+            END LOOP;
+
+            RETURN NRETOUR;
+        END;
+
+        RETURN 0;
+    END OCONTROLEBIEN;
+
+    FUNCTION OCONTROLEFRDOSS (
+        NIDENTIFIANT       IN     NUMBER,
+        SCONTROLE          IN     VARCHAR2,
+        NCTLID             IN OUT NUMBER,
+        CONTRAT_REC        IN     DOSSIERPROSPECT%ROWTYPE,
+        NERREURBLOQUANTE   IN OUT NUMBER,
+        NWARNING           IN OUT NUMBER,
+        NDEROGATION        IN OUT NUMBER,
+        SUTICODE           IN     UTILISATEUR.UTICODE%TYPE,
+        SUGECODE           IN     UTILISATEUR.UGECODE%TYPE,
+        CREVT_REC          IN     CREVT%ROWTYPE)
+        RETURN NUMBER
+    IS
+    BEGIN
+        DECLARE
+            SPHASE           VARCHAR2 (100);
+
+            CURSOR CPARA
+            IS
+                  SELECT TPCCODE
+                    FROM TPARAGRAPHECTL
+                   WHERE TPCDEST = 'FRDOSS'
+                ORDER BY TPCCODE;
+
+            CURSOR CCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                  SELECT PTC.TTCCODE, PTC.PTCFLAGUSER
+                    FROM LKPHATTC PTC, TPCTACCONTROLE TPC
+                   WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                         AND PTC.TPCCODE = TPC.TPCCODE
+                         AND PTC.TPCDEST = TPC.TPCDEST
+                         AND PTC.TACCODE = TPC.TACCODE
+                         AND PTC.TTCCODE = TPC.TTCCODE
+                         AND PTC.TPCCODE = S1
+                         AND PTC.TPCDEST = 'FRDOSS'
+                         AND PTC.PHACODE = SPHASE
+                         AND NVL (PTC.PTCFLAGACTIF, 0) != 2
+                         AND NVL (PTC.PTCFLAGUSER, 0) != 0
+                         AND PTC.TACCODE = CONTRAT_REC.TACCODE
+                         AND PTC.TPGCODE = CONTRAT_REC.TPGCODE
+                         AND F_PLDEROGATORYEXECUTEDCTL (
+                                 CONTRAT_REC.DOSID,
+                                 NVL (PTC.PTCFLAGUSER, 0),
+                                 PTC.TPCCODE,
+                                 PTC.TTCCODE,
+                                 'FRDOSS') =
+                             0
+                ORDER BY PTC.TTCCODE;
+
+            CURSOR CEVCTL (
+                S1   IN TPARAGRAPHECTL.TPCCODE%TYPE)
+            IS
+                SELECT TEC.TTCCODE, TEC.TCEFLAGUSER
+                  FROM LKTTCTEV TEC, TPCTACCONTROLE TPC
+                 WHERE     (TPC.UGECODE = SGUGECODE OR TPC.UGECODE IS NULL)
+                       AND TEC.TPCCODE = TPC.TPCCODE
+                       AND TEC.TPCDEST = TPC.TPCDEST
+                       AND TEC.TACCODE = TPC.TACCODE
+                       AND TEC.TTCCODE = TPC.TTCCODE
+                       AND TEC.TMOMODULE = CREVT_REC.TMOMODULE
+                       AND TEC.TMFFONCTION = CREVT_REC.TMFFONCTION
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 0
+                       AND NVL (TEC.TCEFLAGACTIF, 0) != 2
+                       AND TEC.TACCODE = CONTRAT_REC.TACCODE
+                       AND TEC.TPCCODE = S1
+                       AND TEC.TPCDEST = 'FRDOSS'
+                       AND TEC.TEVDEST = 'FRDOSS'
+                       AND TEC.TPGCODE = CONTRAT_REC.TPGCODE
+                       AND NVL (TEC.TCEFLAGUSER, 0) != 3;
+
+            NRETOUR          NUMBER;
+            PREMIERPASSAGE   BOOLEAN;
+        BEGIN
+            IF NIDENTIFIANT IS NOT NULL
+            THEN
+                SELECT DPRVERSION
+                  INTO SPHASE
+                  FROM V_DEAL
+                 WHERE DOSID = NIDENTIFIANT;
+            END IF;
+
+            -- Par defaut, initialisation a pas de controle trouve
+            NRETOUR := 0;
+            PREMIERPASSAGE := TRUE;
+
+            FOR CPARA_REC IN CPARA
+            LOOP
+                IF PREMIERPASSAGE
+                THEN
+                    SELECT SEQ_RCTID.NEXTVAL INTO NCTLID FROM DUAL;
+
+                    PAV4_TRACE.DEBUG (
+                           'Entree'
+                        || ';'
+                        || 'CONTRAT'
+                        || ';'
+                        || TO_CHAR (NIDENTIFIANT)
+                        || ';'
+                        || SGUSER
+                        || ';'
+                        || TO_CHAR (NCTLID)
+                        || ';'
+                        || SCONTROLE
+                        || ';'
+                        || CONTRAT_REC.TACCODE
+                        || ';');
+
+                    --AkshiK INSERT RAPPORTCTL
+                    INSERT INTO RAPPORTCTL (RCTDESTINATION,
+                                            RCTDESTID,
+                                            RCTDTCREAT,
+                                            UTICODE,
+                                            RCTEVTID,
+                                            RCTCTLTYPE,
+                                            TACCODE)
+                         VALUES ('FRDOSS',
+                                 NIDENTIFIANT,
+                                 SYSDATE,
+                                 SGUSER,
+                                 NCTLID,
+                                 SCONTROLE,
+                                 CONTRAT_REC.TACCODE);
+
+                    PREMIERPASSAGE := FALSE;
+                END IF;
+
+                IF SCONTROLE = 'E'
+                THEN
+                    FOR CEVCTL_REC IN CEVCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CEVCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CEVCTL_REC.TCEFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+                        PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                            NIDENTIFIANT,
+                            NCTLID,
+                            CPARA_REC.TPCCODE,
+                            CEVCTL_REC.TTCCODE,
+                            CEVCTL_REC.TCEFLAGUSER,
+                            SCONTROLE,
+                            CONTRAT_REC,
+                            CREVT_REC,
+                            NERREURBLOQUANTE,
+                            NWARNING,
+                            SUTICODE,
+                            SUGECODE,
+                            NDEROGATION);
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                ELSE
+                    FOR CCTL_REC IN CCTL (CPARA_REC.TPCCODE)
+                    LOOP
+                        PAV4_TRACE.DEBUG (
+                               TO_CHAR (NIDENTIFIANT)
+                            || ';'
+                            || TO_CHAR (NCTLID)
+                            || ';'
+                            || CPARA_REC.TPCCODE
+                            || ';'
+                            || CCTL_REC.TTCCODE
+                            || ';'
+                            || TO_CHAR (CCTL_REC.PTCFLAGUSER)
+                            || ';'
+                            || SCONTROLE
+                            || ';'
+                            || TO_CHAR (NERREURBLOQUANTE)
+                            || ';'
+                            || TO_CHAR (NWARNING)
+                            || ';');
+
+                        IF SUBSTR (CPARA_REC.TPCCODE, 1, 1) = 'U'
+                        THEN
+                            PAV4_DOSSCONTROLE.PCONTRATFRONT (
+                                NIDENTIFIANT,
+                                NCTLID,
+                                CPARA_REC.TPCCODE,
+                                CCTL_REC.TTCCODE,
+                                CCTL_REC.PTCFLAGUSER,
+                                SCONTROLE,
+                                CONTRAT_REC,
+                                CREVT_REC,
+                                NERREURBLOQUANTE,
+                                NWARNING,
+                                SUTICODE,
+                                SUGECODE,
+                                NDEROGATION);
+                            PAV4_TRACE.DEBUG (
+                                   TO_CHAR (NIDENTIFIANT)
+                                || ';'
+                                || TO_CHAR (NCTLID)
+                                || ';'
+                                || CPARA_REC.TPCCODE
+                                || ';'
+                                || CCTL_REC.TTCCODE
+                                || ';'
+                                || TO_CHAR (CCTL_REC.PTCFLAGUSER)
+                                || ';'
+                                || SCONTROLE
+                                || ';'
+                                || TO_CHAR (NERREURBLOQUANTE)
+                                || ';'
+                                || TO_CHAR (NWARNING)
+                                || ';');
+                        END IF;
+
+                        -- On a trouve au moins un controle a passer sur l'occurrence
+                        NRETOUR := 1;
+                    END LOOP;
+                END IF;
+            END LOOP;
+
+            RETURN NRETOUR;
+        END;
+    END OCONTROLEFRDOSS;
+BEGIN
+    P_GETINFOSFROMUSER (SGUSER, SGUGECODE);
+END PACOM_ORFICONTROLE_SHARED;
+/
